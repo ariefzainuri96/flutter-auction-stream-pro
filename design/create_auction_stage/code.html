@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Setup Auction - AuctionStream Pro</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#182234",
+                        "border-dark": "#314368",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "0.75rem", /* Matching approx 12px for fields */
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar hide for cleaner mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto overflow-hidden bg-background-light dark:bg-background-dark shadow-2xl">
+<!-- Header -->
+<header class="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-white/5 backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
+<button class="flex items-center justify-center p-2 -ml-2 text-slate-600 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-full transition-colors" type="button">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight text-center flex-1 pr-8">Setup Auction</h1>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar pb-24 p-4 space-y-6">
+<!-- Photo Upload Area -->
+<div class="relative w-full aspect-square max-h-[320px] mx-auto group cursor-pointer">
+<div class="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-border-dark dark:border-blue-900/50 rounded-xl bg-surface-dark/50 hover:bg-surface-dark transition-colors gap-4">
+<div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-3xl">add_a_photo</span>
+</div>
+<div class="text-center space-y-1">
+<p class="text-white text-base font-semibold">Add Item Photo</p>
+<p class="text-slate-400 text-xs">Tap to upload or take a picture</p>
+</div>
+</div>
+<!-- Hidden Input -->
+<input class="hidden" type="file"/>
+</div>
+<!-- Form Fields -->
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-sm font-medium text-slate-300 ml-1" for="item-name">Item Name</label>
+<input class="w-full h-14 px-4 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="item-name" placeholder="e.g., Vintage Rolex 1970" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium text-slate-300 ml-1" for="starting-bid">Starting Bid ($)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+<input class="w-full h-14 pl-8 pr-4 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="starting-bid" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium text-slate-300 ml-1" for="auction-title">Auction Title</label>
+<input class="w-full h-14 px-4 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="auction-title" placeholder="Enter a catchy title" type="text"/>
+</div>
+</div>
+<!-- Hardware Check -->
+<div class="pt-2">
+<h3 class="text-sm font-semibold text-slate-400 mb-3 ml-1 uppercase tracking-wider text-xs">Hardware Check</h3>
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden divide-y divide-border-dark">
+<!-- Mic Toggle -->
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">mic</span>
+</div>
+<span class="font-medium text-white">Microphone</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Camera Toggle -->
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">videocam</span>
+</div>
+<span class="font-medium text-white">Camera</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Spacer for scroll -->
+<div class="h-8"></div>
+</main>
+<!-- Fixed Bottom Action -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-white/5 backdrop-blur-lg bg-opacity-95 dark:bg-opacity-95 max-w-md mx-auto z-10">
+<button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined">live_tv</span>
+<span>Go Live &amp; Start Auction</span>
+</button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Auction Stage - AuctionStream Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "primary-dark": "#1a4bb0",
+                        "accent": "#10B981", // High contrast Green for Bid button
+                        "accent-hover": "#059669",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    animation: {
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for chat */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(16, 22, 34, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white font-display overflow-hidden select-none">
+<!-- Main Container -->
+<div class="relative h-screen w-full flex flex-col overflow-hidden bg-black">
+<!-- Full Screen Video Background -->
+<div class="absolute inset-0 w-full h-full z-0">
+<!-- Simulated Video Feed -->
+<div class="w-full h-full bg-cover bg-center" data-alt="Live auction host presenting a luxury watch" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAdhY1SXgfLGYCPIp84V8OBTlrw22DLtBu0rc7pb94GksVsKqiaelOnD6m86CCCTciWiIagfbnFs3hg5dpRcrx_KjkXKshTl0SkeA3FyCBOH-pQ5WlMhItuXJ1Ly0Nelg2gr55C3vfhhUHBPW_Eu5-Q5NQb3vPh-Fb5DIUlT8IP6ke4gJ3KjuSkortbi4aiR-ZLcSqOEUeke00VWevenoVUygDHtPuC9oy99CicB5mSFV8SZHm8sgUD4nAgOWrLmlxzlX3K1qv_bHTX');">
+</div>
+<!-- Gradient Overlay for legibility -->
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
+</div>
+<!-- Safe Area Top (iOS Notch Simulation) -->
+<div class="absolute top-0 w-full h-12 z-50 pointer-events-none"></div>
+<!-- Header Overlay -->
+<div class="relative z-10 flex w-full items-start justify-between px-4 pt-14 pb-4">
+<!-- Live Status & Highest Bid Card -->
+<div class="glass-panel flex items-center gap-3 rounded-xl p-3 shadow-lg max-w-[70%]">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-cover bg-center border-2 border-primary" data-alt="Avatar of current highest bidder" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzKNu55VDTpT8mJoP5WYq-NBpiKmv4jood-af-MDwRlp1r1V1x2iL3fsHoruf3-64h3TIzHMr6b7JVRTUaYAmpMDuUn_JcghuYxuO0v34QlNB6v_70afytwqsY-VqZyg5EiCHj45vIJ75CZEJkqjvAEAfKVEzjLKo_uUjC6p42WCu0pL3ECzlgqrGQFvLTuRcPHJsVRpIzPBK_8fWPMbgiHBkITLc5CkaYP0G6oybq5yylAhw-AyIhKxuKo0Ba17Jl8Imxvnpz-sWE');">
+</div>
+<div class="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white border border-black">
+<span class="material-symbols-outlined text-[10px]">gavel</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+</span>
+<p class="text-[10px] font-bold uppercase tracking-wider text-red-400">Live</p>
+</div>
+<div class="flex items-baseline gap-1">
+<p class="text-sm text-gray-300 font-medium">Highest Bid:</p>
+<p class="text-xl font-bold text-white animate-pulse-fast">$1,250</p>
+</div>
+</div>
+</div>
+<!-- Leave Button -->
+<button class="glass-panel group flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 active:scale-95">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<!-- Main Content Area (Spacer for video visibility) -->
+<div class="flex-1"></div>
+<!-- Bottom Interface -->
+<div class="relative z-10 flex w-full flex-col gap-4 px-4 pb-8">
+<!-- Chat Area (Bottom Left) -->
+<div class="flex w-full flex-col items-start justify-end gap-2 h-48 overflow-y-auto scrollbar-hide mask-image-gradient">
+<!-- System Message -->
+<div class="glass-panel max-w-[85%] rounded-lg px-3 py-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<p class="text-xs font-bold text-primary">System</p>
+</div>
+<p class="text-xs text-white/90">Auction started for Vintage Rolex Submariner. Minimum bid increment is $10.</p>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-2 max-w-[85%]">
+<div class="h-6 w-6 shrink-0 rounded-full bg-cover bg-center border border-white/20" data-alt="Avatar of chat user Watcher99" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtrhDFB00P8ByqPMO1h8w7A_-l7UnTJN7e-2g5u2XUqGHKhKX56lYHmISH2xVBhtAwOZ0p0-TX90NbXKB0VWkzpx1iX0UuhMOvF00wjQwh7WtHlwHqObv8WpJoOTeOoP9WPNgTvOdoX5LSy10DoEsb66dN0BbPJk3r5UYa8u2MOjio8T2XLZAwWOVrDoL7_iD-lkclyj4hfuoKDBFdM7YFpQJclFgOmf0rlcto-13L-tevgzbqrXMRM5hlQBPODUegNH5lTM7MdIVn');">
+</div>
+<div class="flex flex-col items-start rounded-lg bg-black/40 px-3 py-2 backdrop-blur-sm">
+<p class="text-[10px] font-bold text-gray-300 mb-0.5">Watcher99</p>
+<p class="text-sm text-white">Is there a certificate of authenticity?</p>
+</div>
+</div>
+<!-- Bid Notification -->
+<div class="flex items-center gap-2 rounded-full bg-accent/20 border border-accent/30 px-3 py-1 backdrop-blur-md self-start my-1">
+<span class="material-symbols-outlined text-accent text-sm">monetization_on</span>
+<p class="text-xs font-semibold text-accent-100">User123 bid <span class="text-white font-bold">$1,240</span>!</p>
+</div>
+<!-- Current User Message (Right Aligned - optional context but kept left for spec consistency) -->
+<!-- Keeping left aligned based on typical live stream chat flows -->
+<div class="flex items-start gap-2 max-w-[85%]">
+<div class="h-6 w-6 shrink-0 rounded-full bg-cover bg-center border border-white/20" data-alt="Avatar of chat user AuctionBot" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjoMB-Lry827sqWfUTzmCKYlekAcF3L4fgr0u8mzLhC4c1eIErvqhp9i6UCVZrQHleBpgD1iwWEnqk-H6B_vsQYSheqTjYL557PYf9Pg9M4ASMkUC7mcp91DKX8CONr14BBLqq1goE1zsP7Py0IWRmBpPVUj6PvULDoFQp3YdiEWMImIR7qM-4d8kf0ZQq7_1_uCe6SIGnzqqNw9QL9yntseC7P3k8L0fXGstGlAXO5qUc_UouPBYu7SBCh5cOxIWz_D7vLBecZ7WE');">
+</div>
+<div class="flex flex-col items-start rounded-lg bg-black/40 px-3 py-2 backdrop-blur-sm">
+<p class="text-[10px] font-bold text-gray-300 mb-0.5">Collector_J</p>
+<p class="text-sm text-white">Looking good! waiting for the right moment.</p>
+</div>
+</div>
+</div>
+<!-- Control Bar -->
+<div class="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pt-2">
+<!-- Empty spacer to balance grid if needed, or secondary actions -->
+<div class="flex items-center justify-start">
+<!-- Like/Heart Button Floating -->
+<button class="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition active:scale-90 hover:bg-white/20">
+<span class="material-symbols-outlined filled text-2xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<!-- Center: Request to Speak -->
+<div class="flex items-center justify-center pb-1">
+<button class="relative flex flex-col items-center justify-center gap-1 group">
+<div class="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/30 transition-transform active:scale-95 border-2 border-white/10 group-hover:bg-primary-dark">
+<span class="material-symbols-outlined text-2xl text-white">mic</span>
+</div>
+<span class="text-[10px] font-semibold text-white/80 shadow-black drop-shadow-md">Speak</span>
+</button>
+</div>
+<!-- Right: Bid Button -->
+<div class="flex flex-col items-end gap-2">
+<!-- Quick preset bid buttons (optional tiny row above) -->
+<div class="flex gap-2 opacity-0 transition-opacity duration-300 hover:opacity-100">
+<button class="rounded-full bg-black/40 px-2 py-1 text-[10px] font-bold text-white border border-white/10 backdrop-blur-md hover:bg-white/20">+$50</button>
+<button class="rounded-full bg-black/40 px-2 py-1 text-[10px] font-bold text-white border border-white/10 backdrop-blur-md hover:bg-white/20">+$100</button>
+</div>
+<button class="relative flex h-14 w-full min-w-[140px] items-center justify-between overflow-hidden rounded-xl bg-accent px-4 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all active:scale-95 active:shadow-none hover:bg-accent-hover">
+<!-- Shimmer effect -->
+<div class="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+<div class="flex flex-col items-start z-10">
+<span class="text-[10px] font-bold text-green-900 uppercase tracking-wider">Quick Bid</span>
+<span class="text-xl font-black text-white leading-none">+$10</span>
+</div>
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white z-10">
+<span class="material-symbols-outlined text-lg font-bold">arrow_upward</span>
+</div>
+</button>
+</div>
+</div>
+<!-- iOS Home Indicator Safe Area -->
+<div class="h-2 w-full"></div>
+</div>
+</div>
+<script>
+        // Optional: Simple JS to handle button press visual feedback if needed beyond CSS active states
+        // But per rules, avoiding complex logic.
+    </script>
+</body></html>
