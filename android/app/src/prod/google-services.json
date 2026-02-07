@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "673553325747",
+    "project_id": "prosa-hi-d86d7",
+    "storage_bucket": "prosa-hi-d86d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673553325747:android:c450be12d824b412f95ac6",
+        "android_client_info": {
+          "package_name": "com.prosahi.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQFlS3S2oYN-O90yYjLVtSQezwAi-N-u0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>832539880391-1mq66vc90bpb43itnacpoecka5k5sael.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.832539880391-1mq66vc90bpb43itnacpoecka5k5sael</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>832539880391-lmlb3b8qinl8ku6bjcg3da008rtehfbd.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDqY5llTzNQ19eGCudeDG6_0fIny3oFbJw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>832539880391</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.stadeo.app</string>
+	<key>PROJECT_ID</key>
+	<string>stadeo-production</string>
+	<key>STORAGE_BUCKET</key>
+	<string>stadeo-production.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:832539880391:ios:cbc00275d09c0f2b0b87e2</string>
+	<key>DATABASE_URL</key>
+	<string>https://stadeo-production-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
