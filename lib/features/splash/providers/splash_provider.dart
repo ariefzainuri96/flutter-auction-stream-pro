@@ -19,10 +19,10 @@ class SplashNotifier extends Notifier<String> {
   Future<void> _checkUserExpiredProcess() async {
     await Future.delayed(const Duration(seconds: 1));
 
-    final role = FlavorConfig.instance?.values.token;
+    final token = FlavorConfig.instance?.values.token;
 
-    if (role.isNotNullOrEmpty) {
-      // TODO: route to desired page based on role
+    if (token.isNotNullOrEmpty) {
+      NavigationService.pushNamedAndRemoveAll(Routes.lobby);
     } else {
       NavigationService.pushNamedAndRemoveAll(Routes.login);
     }

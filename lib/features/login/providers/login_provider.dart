@@ -41,7 +41,7 @@ class LoginNotifier extends Notifier<LoginNotifierData> {
       ),
     );
 
-    NavigationService.pushNamedAndRemoveAll(Routes.downloadData);
+    NavigationService.pushNamedAndRemoveAll(Routes.lobby);
   }
 
   void updateRequest(LoginRequestModel value) {

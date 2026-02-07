@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/lobby/views/lobby_view.dart';
 import '../../features/login/views/login_view.dart';
 import '../../features/splash/views/splash_view.dart';
 import 'router_constant.dart';
@@ -16,6 +17,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => const SplashView(),
+        );
+      case Routes.lobby:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => const LobbyView(),
         );
       // case Routes.profileNakes:
       //   final data = args as ProfileNakesArgsModel;
