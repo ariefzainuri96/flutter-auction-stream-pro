@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/create_auction/screens/create_auction_view.dart';
 import '../../features/lobby/views/lobby_view.dart';
 import '../../features/login/views/login_view.dart';
 import '../../features/splash/views/splash_view.dart';
@@ -22,6 +23,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => const LobbyView(),
+        );
+      case Routes.createAuction:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => const CreateAuctionView(),
         );
       // case Routes.profileNakes:
       //   final data = args as ProfileNakesArgsModel;

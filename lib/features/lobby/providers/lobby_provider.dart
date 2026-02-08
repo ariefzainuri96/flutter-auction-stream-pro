@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/constants/enums/page_state.dart';
+import '../../../cores/routers/router_constant.dart';
+import '../../../cores/utils/navigation_service.dart';
 import '../model/lobby_request_model.dart';
 import '../model/user_role.dart';
 
@@ -10,11 +12,21 @@ final lobbyProvider =
 );
 
 class LobbyNotifier extends Notifier<LobbyNotifierData> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController roomIdController = TextEditingController();
+
   @override
-  LobbyNotifierData build() => LobbyNotifierData(
-        request: LobbyRequestModel(),
-        lobbyState: PageState.initial,
-      );
+  LobbyNotifierData build() {
+    ref.onDispose(() {
+      usernameController.dispose();
+      roomIdController.dispose();
+    });
+
+    return LobbyNotifierData(
+      request: LobbyRequestModel(),
+      lobbyState: PageState.initial,
+    );
+  }
 
   void updateUsername(String value) {
     state = state.copyWith(
@@ -79,8 +91,7 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
 
   /// Create a new room
   Future<void> createNewRoom() async {
-    debugPrint('Creating new room...');
-    // TODO: Implement room creation logic
+    NavigationService.pushNamed(Routes.createAuction);
   }
 }
 

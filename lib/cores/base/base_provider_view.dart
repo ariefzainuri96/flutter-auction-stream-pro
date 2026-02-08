@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import '../constants/colors.dart';
 import '../utils/navigation_service.dart';
 
 final isBroadcastingProvider = StateProvider<bool>((ref) => false);
@@ -12,6 +13,7 @@ class BaseProviderView<T extends Notifier<K>, K> extends ConsumerWidget {
   final bool extendBodyBehindAppBar;
   final bool useSafeArea;
   final Future<bool> Function(T vm, K data)? onPop;
+  final Color? backgroundColor;
 
   const BaseProviderView({
     super.key,
@@ -21,6 +23,7 @@ class BaseProviderView<T extends Notifier<K>, K> extends ConsumerWidget {
     this.extendBodyBehindAppBar = false,
     this.useSafeArea = true,
     this.onPop,
+    this.backgroundColor,
   });
 
   Widget _builder(WidgetRef ref, BuildContext context, T vm, K data) =>
@@ -58,7 +61,7 @@ class BaseProviderView<T extends Notifier<K>, K> extends ConsumerWidget {
             }
           },
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: backgroundColor ?? colors.backgroundDark,
             appBar: appBar?.call(vm, data),
             extendBodyBehindAppBar: extendBodyBehindAppBar,
             body: Stack(
