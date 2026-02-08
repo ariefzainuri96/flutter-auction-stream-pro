@@ -24,6 +24,10 @@ dependencies:
     flutter_dotenv: ^6.0.0
     equatable: ^2.0.7
     image_picker: ^1.1.2
+    firebase_core: ^4.4.0
+    agora_rtc_engine: ^6.5.3
+    agora_rtm: ^2.2.5
+    firebase_database: ^12.1.2
 
 dev_dependencies:
     flutter_test:

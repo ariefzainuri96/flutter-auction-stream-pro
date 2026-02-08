@@ -18,12 +18,12 @@ def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "
 def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 android {   
-    namespace = "com.prosahi.app"
+    namespace = "com.auction.pro"
     compileSdk = 36
     ndkVersion = "28.0.12433566"
 
     defaultConfig {
-        applicationId = "com.prosahi.app"
+        applicationId = "com.auction.pro"
         minSdkVersion = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 17

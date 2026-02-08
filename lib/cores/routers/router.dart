@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../features/create_auction/screens/create_auction_view.dart';
+import '../../features/create_auction/views/create_auction_view.dart';
 import '../../features/lobby/views/lobby_view.dart';
 import '../../features/login/views/login_view.dart';
 import '../../features/splash/views/splash_view.dart';

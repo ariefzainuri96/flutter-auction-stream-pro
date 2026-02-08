@@ -1,4 +1,6 @@
+import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +31,14 @@ void main() {
       await dotenv.load(fileName: envFile);
 
       setupFlavor(flavor);
+
+      await Firebase.initializeApp(
+        options: FirebaseOptions(
+            apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+            appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+            messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+            projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? ''),
+      );
 
       await HiveHelper.initHive();
 

@@ -1,4 +1,4 @@
-package com.prosahi.app
+package com.auction.pro
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -7,7 +7,7 @@ import android.system.Os
 import android.system.OsConstants
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "com.prosahi.app/page_size"
+    private val CHANNEL = "com.auction.pro/page_size"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
