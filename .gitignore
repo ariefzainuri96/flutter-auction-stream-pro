@@ -124,3 +124,5 @@ windows/flutter/generated_plugins.cmake
 .vscode
 
 google-services.json
+
+node_modules/

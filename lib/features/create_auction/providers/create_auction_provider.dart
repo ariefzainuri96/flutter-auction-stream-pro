@@ -61,46 +61,45 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
   }
 
   /// Show photo source selection
-  Future<void> showPhotoSourceSelection(BuildContext context) async {
-    return showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF182234),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.white),
-              title: const Text(
-                'Take Photo',
-                style: TextStyle(color: Colors.white),
+  Future<void> showPhotoSourceSelection(BuildContext context) async =>
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF182234),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Colors.white),
+                title: const Text(
+                  'Take Photo',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickPhoto(fromCamera: true);
+                },
               ),
-              onTap: () {
-                Navigator.pop(context);
-                pickPhoto(fromCamera: true);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.white),
-              title: const Text(
-                'Choose from Gallery',
-                style: TextStyle(color: Colors.white),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.white),
+                title: const Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickPhoto(fromCamera: false);
+                },
               ),
-              onTap: () {
-                Navigator.pop(context);
-                pickPhoto(fromCamera: false);
-              },
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 
   /// Validate all fields and go live
   Future<void> goLiveAndStartAuction() async {
@@ -127,7 +126,9 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
       if (state.request.auctionTitleError != null) {
         errors.add(state.request.auctionTitleError!);
       }
-
+      if (state.request.usernameError != null) {
+        errors.add(state.request.usernameError!);
+      }
       if (errors.isNotEmpty) {
         errorMessage = errors.first;
       }
@@ -147,14 +148,18 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
 
     state = state.copyWith(createState: PageState.success);
 
+    final uid =
+        int.parse(state.request.username.hashCode.toString().substring(0, 8));
+
     final data = AuctionStageViewData(
-      roomId: 'test-room1',
-      userId: 'host',
-      username: 'host',
+      roomId:
+          '${state.request.auctionTitle ?? ''}_${DateTime.now().millisecondsSinceEpoch}',
+      uid: uid,
+      username: state.request.username ?? '',
       isHost: true,
       startingBid: state.request.startingBid,
-      itemName: state.request.itemName, 
-      hostId: int.parse('host'.hashCode.toString().substring(0, 8)),
+      itemName: state.request.itemName,
+      hostId: uid,
     );
 
     NavigationService.pushNamed(Routes.auctionStage, args: data);

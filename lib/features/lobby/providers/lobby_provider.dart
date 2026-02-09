@@ -52,7 +52,7 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
   }
 
   /// Enter the auction room
-  Future<void> enterRoom() async {
+  Future<void> enterRoom(int hostId) async {
     // Validate inputs
     if (!state.request.isValid) {
       debugPrint('Invalid lobby data: username and roomId are required');
@@ -62,11 +62,13 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
 
     // state = state.copyWith(lobbyState: PageState.loading);
 
+    final uid = '${state.request.username}'.hashCode.toString().substring(0, 8);
+
     final data = AuctionStageViewData(
-      roomId: 'test-room1',
-      userId: 'viewer1',
-      username: 'viewer1',
-      hostId: int.parse('host'.hashCode.toString().substring(0, 8)),
+      roomId: state.request.roomId ?? '',
+      uid: int.tryParse(uid) ?? 0,
+      username: state.request.username ?? '',
+      hostId: hostId,
     );
 
     NavigationService.pushNamed(Routes.auctionStage, args: data);

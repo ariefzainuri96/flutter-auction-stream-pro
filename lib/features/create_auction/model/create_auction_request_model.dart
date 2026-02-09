@@ -1,5 +1,6 @@
 class CreateAuctionRequestModel {
   String? itemName;
+  String? username;
   double? startingBid;
   String? auctionTitle;
   String? photoPath;
@@ -7,6 +8,7 @@ class CreateAuctionRequestModel {
   CreateAuctionRequestModel({
     this.itemName,
     this.startingBid,
+    this.username,
     this.auctionTitle,
     this.photoPath,
   });
@@ -15,6 +17,8 @@ class CreateAuctionRequestModel {
   bool get isValid =>
       itemName != null &&
       itemName!.trim().isNotEmpty &&
+      username != null &&
+      username!.trim().isNotEmpty &&
       startingBid != null &&
       startingBid! >= 0 &&
       auctionTitle != null &&
@@ -26,6 +30,13 @@ class CreateAuctionRequestModel {
   String? get itemNameError {
     if (itemName == null || itemName!.trim().isEmpty) {
       return 'Item name is required';
+    }
+    return null;
+  }
+
+  String? get usernameError {
+    if (username == null || username!.trim().isEmpty) {
+      return 'Username is required';
     }
     return null;
   }
@@ -56,12 +67,14 @@ class CreateAuctionRequestModel {
 
   CreateAuctionRequestModel copyWith({
     String? itemName,
+    String? username,
     double? startingBid,
     String? auctionTitle,
     String? photoPath,
   }) =>
       CreateAuctionRequestModel(
         itemName: itemName ?? this.itemName,
+        username: username ?? this.username,
         startingBid: startingBid ?? this.startingBid,
         auctionTitle: auctionTitle ?? this.auctionTitle,
         photoPath: photoPath ?? this.photoPath,

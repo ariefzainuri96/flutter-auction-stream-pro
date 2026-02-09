@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
-import '../../../cores/utils/navigation_service.dart';
 import '../../../cores/widgets/bid_button.dart';
 import '../../../cores/widgets/live_status_card.dart';
 import '../model/auction_room_state.dart';
@@ -12,7 +11,7 @@ import '../widgets/chat_overlay.dart';
 
 class AuctionStageViewData {
   final String roomId;
-  final String userId;
+  final int uid;
   final String username;
   final bool isHost;
   final double? startingBid;
@@ -21,7 +20,7 @@ class AuctionStageViewData {
 
   AuctionStageViewData({
     required this.roomId,
-    required this.userId,
+    required this.uid,
     required this.username,
     required this.hostId,
     this.isHost = false,
@@ -61,7 +60,7 @@ class AuctionStageView extends ConsumerWidget {
             if (data.connectionState == AuctionConnectionState.disconnected) {
               vm.initializeWithParams(
                 roomId: args.roomId,
-                userId: args.userId,
+                uid: args.uid,
                 username: args.username,
                 isHost: args.isHost,
                 startingBid: args.startingBid,
@@ -80,7 +79,7 @@ class AuctionStageView extends ConsumerWidget {
               _buildGradientOverlays(),
 
               // Top header with live status and highest bid
-              _buildTopHeader(data),
+              _buildTopHeader(context, data, vm),
 
               // Chat overlay at bottom
               Positioned(
@@ -164,7 +163,9 @@ class AuctionStageView extends ConsumerWidget {
       );
 
   /// Build top header
-  Widget _buildTopHeader(AuctionRoomState data) => Positioned(
+  Widget _buildTopHeader(BuildContext context, AuctionRoomState data,
+          AuctionStageNotifier notifier) =>
+      Positioned(
         top: 0,
         left: 0,
         right: 0,
@@ -189,7 +190,13 @@ class AuctionStageView extends ConsumerWidget {
 
                 // Close button
                 GestureDetector(
-                  onTap: () => NavigationService.pop(),
+                  onTap: () async {
+                    final shouldLeave = await _showLeaveConfirmation(context);
+
+                    if (shouldLeave) {
+                      await notifier.leaveAuction();
+                    }
+                  },
                   child: Container(
                     width: 40,
                     height: 40,
@@ -291,7 +298,7 @@ class AuctionStageView extends ConsumerWidget {
       GestureDetector(
         onTap: () {
           // TODO: Get host ID from room data
-          vm.requestToSpeak('host_id', data.userId);
+          vm.requestToSpeak(data.username ?? '');
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,

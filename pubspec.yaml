@@ -28,6 +28,8 @@ dependencies:
     agora_rtc_engine: ^6.5.3
     agora_rtm: ^2.2.2
     firebase_database: ^12.1.2
+    firebase_auth: ^6.1.4
+    cloud_functions: ^6.0.6
 
 dev_dependencies:
     flutter_test:

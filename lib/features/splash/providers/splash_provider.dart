@@ -17,7 +17,7 @@ class SplashNotifier extends Notifier<String> {
   Future<void> _checkUserExpiredProcess() async {
     await Future.delayed(const Duration(seconds: 1));
 
-    NavigationService.pushNamedAndRemoveAll(Routes.lobby);
+    NavigationService.pushNamedAndRemoveAll(Routes.auctionList);
 
     // final token = FlavorConfig.instance?.values.token;
 

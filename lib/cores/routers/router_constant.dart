@@ -1,7 +1,8 @@
 class Routes {
   static const splash = '/splash';
   static const login = '/login';
-  static const lobby = '/lobby';
+  static const lobby = '/lobby';  
+  static const auctionList = '/auction-list';
   static const createAuction = '/create-auction';
   static const auctionStage = '/auction-stage';
   static const downloadData = '/download-data';

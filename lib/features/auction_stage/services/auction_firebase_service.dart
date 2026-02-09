@@ -37,7 +37,8 @@ class AuctionFirebaseService {
     }
 
     debugPrint(
-        '[AuctionFirebaseService] Starting to listen for bid updates...');
+      '[AuctionFirebaseService] Starting to listen for bid updates...',
+    );
 
     _bidSubscription = _auctionRef!.child('currentBid').onValue.listen(
       (event) {
@@ -48,7 +49,8 @@ class AuctionFirebaseService {
           final bidderAvatar = data['bidderAvatar'] as String?;
 
           debugPrint(
-              '[AuctionFirebaseService] Bid updated: \$$amount by $bidderId');
+            '[AuctionFirebaseService] Bid updated: \$$amount by $bidderId',
+          );
           onBidUpdated?.call(amount, bidderId, bidderAvatar);
         }
       },
@@ -100,7 +102,8 @@ class AuctionFirebaseService {
     }
 
     debugPrint(
-        '[AuctionFirebaseService] Attempting to place bid: \$$bidAmount by $userId');
+      '[AuctionFirebaseService] Attempting to place bid: \$$bidAmount by $userId',
+    );
 
     try {
       final bidRef = _auctionRef?.child('currentBid');
@@ -124,13 +127,15 @@ class AuctionFirebaseService {
         // Check if new bid is higher than current bid
         if (bidAmount <= currentBid) {
           debugPrint(
-              '[AuctionFirebaseService] Bid rejected: \$$bidAmount <= \$$currentBid');
+            '[AuctionFirebaseService] Bid rejected: \$$bidAmount <= \$$currentBid',
+          );
           return Transaction.abort();
         }
 
         // Accept the bid
         debugPrint(
-            '[AuctionFirebaseService] Bid accepted: \$$bidAmount > \$$currentBid');
+          '[AuctionFirebaseService] Bid accepted: \$$bidAmount > \$$currentBid',
+        );
         return Transaction.success({
           'amount': bidAmount,
           'bidderId': userId,
@@ -141,7 +146,8 @@ class AuctionFirebaseService {
 
       if (transactionResult?.committed ?? false) {
         debugPrint(
-            '[AuctionFirebaseService] Transaction committed successfully');
+          '[AuctionFirebaseService] Transaction committed successfully',
+        );
         return BidResult(
           success: true,
           message: 'Bid placed successfully',
@@ -149,7 +155,8 @@ class AuctionFirebaseService {
         );
       } else {
         debugPrint(
-            '[AuctionFirebaseService] Transaction aborted - bid too low');
+          '[AuctionFirebaseService] Transaction aborted - bid too low',
+        );
         return BidResult(
           success: false,
           message: 'Your bid is too low. Someone else bid higher!',

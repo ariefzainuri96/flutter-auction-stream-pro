@@ -10,7 +10,12 @@ import '../../../cores/widgets/role_toggle.dart';
 import '../../../cores/constants/colors.dart';
 
 class LobbyView extends StatelessWidget {
-  const LobbyView({super.key});
+  final int hostId;
+
+  const LobbyView({
+    super.key,
+    required this.hostId,
+  });
 
   @override
   Widget build(BuildContext context) => BaseProviderView(
@@ -89,7 +94,7 @@ class LobbyView extends StatelessWidget {
                           SharedPrimaryButton(
                             text: 'Enter Room',
                             trailingIcon: Icons.login_outlined,
-                            onPressed: notifier.enterRoom,
+                            onPressed: () => notifier.enterRoom(0),
                             isLoading: data.lobbyState == PageState.loading,
                           ),
 

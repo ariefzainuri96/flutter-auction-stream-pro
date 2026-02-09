@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'cores/utils/firebase_helper.dart';
 import 'generated/app_localizations.dart';
 import 'cores/config/env.dart';
 import 'cores/constants/colors.dart';
@@ -33,11 +39,29 @@ void main() {
 
       await Firebase.initializeApp(
         options: FirebaseOptions(
-            apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
-            appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
-            messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
-            projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? ''),
+          apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+          appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+          messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+          projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+        ),
       );
+
+      if (kDebugMode) {
+        // Android Emulator uses 10.0.2.2 to access host machine
+        // iOS Simulator uses localhost
+        final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+
+        try {
+          FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
+          FirebaseAuth.instance
+              .useAuthEmulator(host, 9099); // Optional: if using Auth emulator
+          debugPrint('🔌 Connected to Firebase Emulator at $host:5001');
+        } catch (e) {
+          debugPrint('⚠️ Emulator connection failed: $e');
+        }
+      }
+
+      await signInAnonymously();
 
       await HiveHelper.initHive();
 

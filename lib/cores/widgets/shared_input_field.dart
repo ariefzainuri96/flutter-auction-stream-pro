@@ -3,7 +3,7 @@ import '../constants/colors.dart';
 
 /// Shared custom input field used across features
 class SharedInputField extends StatelessWidget {
-  final String label;
+  final String? label;
   final String placeholder;
   final IconData? prefixIcon;
   final Widget? prefixWidget;
@@ -12,10 +12,11 @@ class SharedInputField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final bool isMonospaced;
+  final Function()? onSuffixTap;
 
   const SharedInputField({
     super.key,
-    required this.label,
+    this.label,
     required this.placeholder,
     this.prefixIcon,
     this.prefixWidget,
@@ -24,6 +25,7 @@ class SharedInputField extends StatelessWidget {
     this.onChanged,
     this.keyboardType,
     this.isMonospaced = false,
+    this.onSuffixTap,
   });
 
   Widget? buildPrefixWidget() {
@@ -43,17 +45,18 @@ class SharedInputField extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: colors.slate300,
+          if (label != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 8),
+              child: Text(
+                label ?? '',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: colors.slate300,
+                ),
               ),
             ),
-          ),
           Container(
             decoration: BoxDecoration(
               color: colors.surfaceDark,
@@ -82,10 +85,13 @@ class SharedInputField extends StatelessWidget {
                 ),
                 prefixIcon: buildPrefixWidget(),
                 suffixIcon: suffixIcon != null
-                    ? Icon(
-                        suffixIcon,
-                        color: colors.slate500,
-                        size: 20,
+                    ? GestureDetector(
+                        onTap: () => onSuffixTap?.call(),
+                        child: Icon(
+                          suffixIcon,
+                          color: colors.slate500,
+                          size: 20,
+                        ),
                       )
                     : null,
                 border: InputBorder.none,

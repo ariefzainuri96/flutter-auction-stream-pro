@@ -1,6 +1,7 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../cores/utils/firebase_helper.dart';
 import '../model/auction_room_state.dart';
 import '../services/agora_rtc_service.dart';
 import '../services/agora_rtm_service.dart';
@@ -43,14 +44,13 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     // Return initial state
     return const AuctionRoomState(
       roomId: '',
-      userId: '',
     );
   }
 
   /// Initialize with specific parameters
   void initializeWithParams({
     required String roomId,
-    required String userId,
+    required int uid,
     required String username,
     required bool isHost,
     required int hostId,
@@ -59,13 +59,14 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
   }) {
     state = state.copyWith(
       roomId: roomId,
-      userId: userId,
+      uid: uid,
       userRole: isHost ? UserRole.host : UserRole.audience,
-      hostId: hostId,
+      hostId: hostId,      
     );
 
     // Start connection
     _connectToAuction(
+      roomId: roomId,
       isHost: isHost,
       startingBid: startingBid,
       itemName: itemName,
@@ -104,9 +105,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     };
 
     // RTM callbacks
-    _rtmService.onMessageReceived = (message) {
-      _addMessage(message);
-    };
+    _rtmService.onMessageReceived = _addMessage;
 
     _rtmService.onSpeakRequest = (request) {
       if (state.isHost) {
@@ -125,10 +124,6 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       }
     };
 
-    _rtmService.onBidUpdate = (newBid, userId) {
-      // Bid updates are handled via Firebase listener
-    };
-
     // Firebase callbacks
     _firebaseService.onBidUpdated = (newBid, bidderId, bidderAvatar) {
       state = state.copyWith(
@@ -145,6 +140,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
 
   /// Connect to auction (RTC + RTM + Firebase)
   Future<void> _connectToAuction({
+    required String roomId,
     required bool isHost,
     double? startingBid,
     String? itemName,
@@ -153,20 +149,24 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       state =
           state.copyWith(connectionState: AuctionConnectionState.connecting);
 
+      final token = await generateToken(
+        channelName: state.roomId,
+        uid: state.uid ?? 0,
+        role: isHost ? 'publisher' : 'subscriber',
+      );
+
       // 1. Initialize RTC
       await _rtcService.initialize(isHost);
 
       // 2. Initialize RTM
-      await _rtmService.initialize(userId: state.userId);
-      await _rtmService.login(token: '', userId: state.userId);
-
-      final hasUserId = state.userId.hashCode.toString().substring(0, 8);
+      await _rtmService.initialize(userId: state.uid.toString());
+      await _rtmService.login(token: token, userId: state.uid.toString());
 
       // 3. Join RTC channel
       await _rtcService.joinChannel(
-        token: '', // In production, generate token from server
+        token: token,
         channelName: state.roomId,
-        uid: int.parse(hasUserId),
+        uid: state.uid ?? 0,
         isHost: isHost,
       );
 
@@ -224,7 +224,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
 
     final result = await _firebaseService.placeBid(
       bidAmount: newBid,
-      userId: state.userId,
+      userId: state.uid.toString(),
       userAvatar: null, // TODO: Add user avatar
     );
 
@@ -232,8 +232,8 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       // Broadcast to all users via RTM
       await _rtmService.broadcastBidUpdate(
         amount: newBid,
-        userId: state.userId,
-        username: state.userId, // TODO: Use actual username
+        userId: state.uid.toString(),
+        username: state.username ?? '', // TODO: Use actual username
       );
 
       debugPrint('[AuctionStageNotifier] Bid placed successfully');
@@ -243,11 +243,10 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
   }
 
   /// Request to speak (audience -> host)
-  Future<void> requestToSpeak(String hostId, String username) async {
+  Future<void> requestToSpeak(String username) async {
     if (state.isHost) return;
 
     await _rtmService.requestToSpeak(
-      hostId: hostId,
       username: username,
       avatarUrl: null, // TODO: Add avatar
     );

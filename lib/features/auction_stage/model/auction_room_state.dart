@@ -19,7 +19,7 @@ enum UserRole {
 /// Main auction room state
 class AuctionRoomState extends Equatable {
   final String roomId;
-  final String userId;
+  final String? username;
   final UserRole userRole;
   final AuctionConnectionState connectionState;
   final double currentBid;
@@ -32,10 +32,11 @@ class AuctionRoomState extends Equatable {
   final bool isCameraEnabled;
   final String? errorMessage;
   final int? hostId;
+  final int? uid;
 
   const AuctionRoomState({
     required this.roomId,
-    required this.userId,
+    this.username,
     this.userRole = UserRole.audience,
     this.connectionState = AuctionConnectionState.disconnected,
     this.currentBid = 0,
@@ -48,12 +49,13 @@ class AuctionRoomState extends Equatable {
     this.isCameraEnabled = false,
     this.errorMessage,
     this.hostId,
+    this.uid,
   });
 
   AuctionRoomState copyWith({
     String? roomId,
-    String? userId,
     UserRole? userRole,
+    String? username,
     AuctionConnectionState? connectionState,
     double? currentBid,
     String? highestBidderUserId,
@@ -65,10 +67,11 @@ class AuctionRoomState extends Equatable {
     bool? isCameraEnabled,
     String? errorMessage,
     int? hostId,
+    int? uid,
   }) =>
       AuctionRoomState(
+        username: username ?? this.username,
         roomId: roomId ?? this.roomId,
-        userId: userId ?? this.userId,
         userRole: userRole ?? this.userRole,
         connectionState: connectionState ?? this.connectionState,
         currentBid: currentBid ?? this.currentBid,
@@ -81,6 +84,7 @@ class AuctionRoomState extends Equatable {
         isCameraEnabled: isCameraEnabled ?? this.isCameraEnabled,
         errorMessage: errorMessage ?? this.errorMessage,
         hostId: hostId ?? this.hostId,
+        uid: uid ?? this.uid,
       );
 
   bool get isHost => userRole == UserRole.host;
@@ -90,7 +94,7 @@ class AuctionRoomState extends Equatable {
   @override
   List<Object?> get props => [
         roomId,
-        userId,
+        username,
         userRole,
         connectionState,
         currentBid,
@@ -103,6 +107,7 @@ class AuctionRoomState extends Equatable {
         isCameraEnabled,
         errorMessage,
         hostId,
+        uid,
       ];
 }
 

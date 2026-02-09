@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explore Live Auctions</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#0B101A", // Deep blue-grey as requested
+                        "surface-dark": "#151b28",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto border-x border-gray-800 shadow-2xl">
+<header class="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md pt-safe-top">
+<div class="flex items-center justify-between px-5 py-4">
+<h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Live Auctions</h1>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-surface-dark text-gray-600 dark:text-gray-300 transition hover:bg-gray-300 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+</button>
+</div>
+<div class="px-5 pb-4">
+<div class="group flex w-full items-center rounded-2xl bg-white dark:bg-surface-dark px-4 py-3 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition focus-within:ring-2 focus-within:ring-primary">
+<span class="material-symbols-outlined mr-3 text-gray-400">search</span>
+<input class="h-full w-full bg-transparent text-base text-gray-900 placeholder-gray-400 focus:outline-none dark:text-white" placeholder="Find items..." type="text"/>
+</div>
+</div>
+<div class="no-scrollbar flex w-full gap-3 overflow-x-auto px-5 pb-4">
+<button class="flex shrink-0 items-center justify-center rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md shadow-primary/20 transition hover:bg-primary/90">
+                    All
+                </button>
+<button class="flex shrink-0 items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:border-primary/50 hover:text-primary dark:hover:text-primary">
+                    Electronics
+                </button>
+<button class="flex shrink-0 items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:border-primary/50 hover:text-primary dark:hover:text-primary">
+                    Art
+                </button>
+<button class="flex shrink-0 items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:border-primary/50 hover:text-primary dark:hover:text-primary">
+                    Sports
+                </button>
+<button class="flex shrink-0 items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:border-primary/50 hover:text-primary dark:hover:text-primary">
+                    Fashion
+                </button>
+</div>
+<div class="h-px w-full bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent"></div>
+</header>
+<main class="flex-1 overflow-y-auto p-5 pb-24">
+<div class="grid grid-cols-2 gap-4">
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Luxury watch close up" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Close up of a luxury vintage watch on a wrist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg7MYmmv5_ysUcQfmBVizhP6VS2QjkZIAYtfizmsjPpqkFZRQQn4E0XpEpZq4I0w4S8zRm_bPjGRjHZI-0HlFL9KSHgkYbCQk5qhGtt1Qf1hpkKnB6uWsAUHMwHukKozs3FbHPg91TsTx2teQI8ld4Kh-fm2wY6FwmHYwGiev4GyLOIBGpKRjuYO0OkHI72TYS4F6qLRj7kKsK58b4eN-67qnuj5nwFeLhW_sICy9AuFIDAWfOAK1OtKoVHsW9diO-79xrjdyorDOQ"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 240
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Vintage Rolex Submariner</h3>
+<p class="text-lg font-extrabold text-primary">$12,500</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of a man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkgloL7Iud--8QF-kQ7RaVuqgxtyTKULLlk4bqVrhAgw2u-vpMXcuhh3RX9WVfNq_8rMf26yA-h39GZs21UAqFzbJYGtF0TlLTywSioHEQowJPUUGA9NsqNBZkwbMrnsvdQtFy18IFVAFa0wE_8Zvl-Of3a1lNl44rFguKbeMbuy-tJ3gDKEFnpMaZ0D7Nz_6WCJsx1czDHVUcUz1DywnRaekvLFeWuAPzCOLfkH2hSj_VgycQApr3hToZTAqlRtjeyOMativlZgYh"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@WatchGuy</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Pokemon card charizard" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Rare trading card in a protective sleeve" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASJPY6qQmq81rYtijTcCEEeFEApRBSVVG-Gd7SuLxo2E1ghpW3LRLCuiXvf2pNGTuFzWWjcgFOjZLLe_DGIINlyFl3EsV2nnCutdGOnVTNj7BsT-4Kg0wSfB4h_9QkYv304_8pAEcHJQ2GuEmtGR4Hz17AD3yw4RDXLyPw2ZrGl6ETkNDPWFPsi2PzMe1TF9zhDdtmQPZlFsg7lFCvtmSB1R-Bk6CoeREUv0O7PWBkIh0fP4-vq2dlYyfrNKMYpuhEMZOpTsGVBhCo"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 1.2k
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Charizard 1st Edition</h3>
+<p class="text-lg font-extrabold text-primary">$4,200</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of a smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3vIs8a87t8RgRfY1n9w085PZLOUuhV6V3HY2GKxowZkEYOzJFq5uFaLSDv6RCvtPw5JCIEInFRcOWe2Aw4hG49O1k5RJ9LQdKwLYqmMoIhVJuiqyQqS4vDflXryXPEenw2sF8Jnlazh42xTuOd5yuuw4xP4bDGJnzEB3q0TlXC51SM7apgQB0HVl2efGGPUuWE1Bd3odW5raBiDbhPKFFViRo2ReLopkiWqHbX-iUkev3pdnD9LgeG8_izPAsBCoXDUM9gp80-G1E"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@CardCollector</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Basketball jersey framed" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Signed sports jersey hanging on a wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALuoybNAjHp_q1nwn817VktSr4xaKqINZgMUV7ZQ-7I3lj-2dhpwARemyTEnyA37mWLqMo5s98LKkGC5kD2E9LnjYmn9p1n02mXiJlsK8Zf2-8efvv6QH5lLAsE6Z83cdlogdwMA2BAeMsUepOyiBUvRQPd--yM6hQMX1jFbXXXpmu1qDvi7jDXYfQMZ7HGmMzsae-sl0xDLFU4Mi0xefkmayslHkW5Ry1q_GZXFsm2_kjtir1sCxzBvg2qDlcmzb2Mrni8kKWBVKv"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 85
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Signed Jordan Jersey</h3>
+<p class="text-lg font-extrabold text-primary">$850</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of a young man in a cap" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWNHXdlL8uTerMK9p2jdtFrFlg2uV5-ZhJOCiJAeBQ5hGsXP0qJAg-TaPZXOno9q_EkMKigr21hg_r8jLq_2JRZ9J4aKzIYKdE9dsu-Puwu-Ld0zZiobT2RjIsIgnN4oUnJ8yuFMrWhqy3749xioZmAWGO_ucr0Djo7_uJ0n8vUZ3nlBm5kZ7NyJ5kW13F63BVV6S2oUmmn_jsj9AZOoAXQhPIMIKt1cXaGeU1Cnv0IcdMyaqIzWULgr8N1t6coGifMWr2ci1iaVLz"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@SportsMem</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Designer handbag" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Luxury leather handbag on a table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo1L8pwgzfFXIQLCA_yUc6Ld3BBs81nHb7zB0qdG4aEPj2G5jm-5uu4aXhSLfujCsa7Ou3pIHionfVY2j1LxW5vyNVX42niKg8oFdccMqyeMQ_d3xUOoiK6ZXlVdDcEcn3ssS6UPudUvqypGaqVzcqttZcbDUyiocH0keXSAdJS1Kpu9bDPRaPLPkCgwvS7nZ8RWLfk6YXBtkfZrF-NTBSU34m6mtzuMv96GOgFoOl20ZD0JHGFMFv6eRX0fEG3PPW2T1a1_qbtQSd"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 342
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Gucci 1955 Bag</h3>
+<p class="text-lg font-extrabold text-primary">$1,100</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of a stylish woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyijCrVptGXiw33GKSepHG_9-PuIK7iKDJDNDaj6-vbsRfNkEgHtuFerz4ExL3moBdDSVBcm9K_zJEbQLqqVXWoxtJJyaDKsD3ZrIxOyOiuK7Ipbs_76eo77kr-lovk9NxyBvPKfG-_-ttcK9D83nfhwu9R7nQeHRZCijI4-c0s5wT66le4pu76VeOOQJod_Ie78mlg9B4n1a2td8iDGdQAtJ0sk2S3sHiBKD6Im4Cf6s2ErhTub38MkOITJR77TY5h8DRv6Mwnu8m"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@LuxeLife</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Retro sneakers" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Pair of retro sneakers on a colorful background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlFs5sdwTUUwkh2MrNIL9Z8Grt7-8HHaykSSg6ty_wHge9o7ngLpBDSxcUQwhJVB5LtEgM5YCodn15I-qshnMoBw5P-NZ5V4BqOSuCD_7wwqcr9s7VBI7_lopj1m1G54hyS4QFZ1tcVFtIq3TSLNToBXs9EVo9C86xnXkZ417ecJAP3psLIW4Uxtmv-Dh1M-ag47sBfacvVUaB1r5Xa44SXg1H7MboKewC-RLMgeY5mefoD46y9eR7YwmqEzOr82P01Qo36fS10l7N"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 56
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Air Jordan 1 Retro</h3>
+<p class="text-lg font-extrabold text-primary">$320</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of a person wearing a hoodie" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZsATWlaS9qyLi_T37XNhFnJ-0hDqeDuaqs01dHVVwG-9eFAD8viiLuO03TmO7xa48CB9SRexXEjB07LkPDs_DzvdusP15NFeC1eHELGlhYs0EM9jkRVKk9_6mpwTU_rm57bDDX_2L4uWcQiY7Yrg3N2r2YjJeejNbsqBJAlgBA6etGKB2_rmMi6Rgof4LNDDInB79mATdNj5DZwvPh5lAlCckJXkCxDVi2udKNF3cE0HtvrSpkZ10DVkMejmUKuVOj6sgFobnmD_1"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@SneakerHead</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-3">
+<div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-800">
+<img alt="Oil painting abstract" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" data-alt="Abstract oil painting with vibrant colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfI8i9EWRVbZQDm8RWCm1zNawZipvbDqSnijNcANaaM8omB8ilLA6RfS5u2N3DlkDI42lTeSczBnt0mFk26vzsObk1XKO05okHdwJ_YSr6Qzdd_iwX5tEnznCl-GyG5viOqLNkxIlntpoGKEzC8fBHmHw7SJZlFw87ma4Na4DY5mFH4EbPQu7eebKANG8GbAljquYnkalGyxjYjMKEswVAjsK8Lw68o6yefmY0oxJl1G1rfF8uYvrIbY9CAXGjOWm0RbytqrDQJR4t"/>
+<div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">
+<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                            LIVE • 112
+                        </div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+</div>
+<div class="space-y-1">
+<h3 class="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">Abstract #42</h3>
+<p class="text-lg font-extrabold text-primary">$2,400</p>
+<div class="flex items-center gap-2 pt-1">
+<img alt="User Avatar" class="h-5 w-5 rounded-full object-cover ring-1 ring-gray-700" data-alt="Avatar of an older man with a beard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo_tHnpUlyYrLDe2YpcufBfGZwEfhRGYumI0SZk-oG4mzJDgbU_zfu-jY5MiKh0UsaBStIYTME1q6Q9LmkVXyOZ5LZ_locru57KfWLjY9yrubXwYjpdYGKXCsWBi8NRBzky3MjfuTIIHQWWvP8dtHlKCNqwoPWekRIzUM7boGUD-e9DiYXFIhy6fNjZYkQ0aMfeEQyX6NVe1lWBQvaDh6eWu06wsPAelsMjDvXrRznxa2B-Kf2ARRwlXeVwdBxYLqAMr__vb_9-fmd"/>
+<span class="truncate text-xs font-medium text-gray-500 dark:text-gray-400">@ArtGallery</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="absolute bottom-6 right-6 z-30 pointer-events-none">
+<button class="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#256af4] to-[#7c3aed] shadow-[0_8px_30px_rgb(37,106,244,0.4)] transition hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-[28px] text-white">videocam</span>
+</button>
+</div>
+</div>
+
+</body></html>
