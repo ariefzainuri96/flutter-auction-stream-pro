@@ -62,23 +62,22 @@ class AuctionRoomState extends Equatable {
     bool? isMicEnabled,
     bool? isCameraEnabled,
     String? errorMessage,
-  }) {
-    return AuctionRoomState(
-      roomId: roomId ?? this.roomId,
-      userId: userId ?? this.userId,
-      userRole: userRole ?? this.userRole,
-      connectionState: connectionState ?? this.connectionState,
-      currentBid: currentBid ?? this.currentBid,
-      highestBidderUserId: highestBidderUserId ?? this.highestBidderUserId,
-      highestBidderAvatar: highestBidderAvatar ?? this.highestBidderAvatar,
-      messages: messages ?? this.messages,
-      speakRequests: speakRequests ?? this.speakRequests,
-      isLive: isLive ?? this.isLive,
-      isMicEnabled: isMicEnabled ?? this.isMicEnabled,
-      isCameraEnabled: isCameraEnabled ?? this.isCameraEnabled,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+  }) =>
+      AuctionRoomState(
+        roomId: roomId ?? this.roomId,
+        userId: userId ?? this.userId,
+        userRole: userRole ?? this.userRole,
+        connectionState: connectionState ?? this.connectionState,
+        currentBid: currentBid ?? this.currentBid,
+        highestBidderUserId: highestBidderUserId ?? this.highestBidderUserId,
+        highestBidderAvatar: highestBidderAvatar ?? this.highestBidderAvatar,
+        messages: messages ?? this.messages,
+        speakRequests: speakRequests ?? this.speakRequests,
+        isLive: isLive ?? this.isLive,
+        isMicEnabled: isMicEnabled ?? this.isMicEnabled,
+        isCameraEnabled: isCameraEnabled ?? this.isCameraEnabled,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
 
   bool get isHost => userRole == UserRole.host;
   bool get isSpeaker => userRole == UserRole.speaker;
@@ -122,32 +121,29 @@ class ChatMessageModel extends Equatable {
     required this.timestamp,
   });
 
-  factory ChatMessageModel.fromJson(Map<String, dynamic> json) {
-    return ChatMessageModel(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      username: json['username'] as String,
-      avatarUrl: json['avatarUrl'] as String?,
-      message: json['message'] as String,
-      type: ChatMessageType.values.firstWhere(
-        (e) => e.name == json['type'],
-        orElse: () => ChatMessageType.text,
-      ),
-      timestamp: DateTime.parse(json['timestamp'] as String),
-    );
-  }
+  factory ChatMessageModel.fromJson(Map<String, dynamic> json) =>
+      ChatMessageModel(
+        id: json['id'] as String,
+        userId: json['userId'] as String,
+        username: json['username'] as String,
+        avatarUrl: json['avatarUrl'] as String?,
+        message: json['message'] as String,
+        type: ChatMessageType.values.firstWhere(
+          (e) => e.name == json['type'],
+          orElse: () => ChatMessageType.text,
+        ),
+        timestamp: DateTime.parse(json['timestamp'] as String),
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'userId': userId,
-      'username': username,
-      'avatarUrl': avatarUrl,
-      'message': message,
-      'type': type.name,
-      'timestamp': timestamp.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'message': message,
+        'type': type.name,
+        'timestamp': timestamp.toIso8601String(),
+      };
 
   @override
   List<Object?> get props =>
@@ -175,23 +171,20 @@ class SpeakRequestModel extends Equatable {
     required this.timestamp,
   });
 
-  factory SpeakRequestModel.fromJson(Map<String, dynamic> json) {
-    return SpeakRequestModel(
-      userId: json['userId'] as String,
-      username: json['username'] as String,
-      avatarUrl: json['avatarUrl'] as String?,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-    );
-  }
+  factory SpeakRequestModel.fromJson(Map<String, dynamic> json) =>
+      SpeakRequestModel(
+        userId: json['userId'] as String,
+        username: json['username'] as String,
+        avatarUrl: json['avatarUrl'] as String?,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'userId': userId,
-      'username': username,
-      'avatarUrl': avatarUrl,
-      'timestamp': timestamp.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'timestamp': timestamp.toIso8601String(),
+      };
 
   @override
   List<Object?> get props => [userId, username, avatarUrl, timestamp];

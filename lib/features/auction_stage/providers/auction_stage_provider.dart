@@ -5,6 +5,7 @@ import '../model/auction_room_state.dart';
 import '../services/agora_rtc_service.dart';
 import '../services/agora_rtm_service.dart';
 import '../services/auction_firebase_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Provider for the auction stage
 final auctionStageProvider =
@@ -20,8 +21,8 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
   late final AuctionFirebaseService _firebaseService;
 
   // Configuration (In production, get from environment or secure storage)
-  static const String _agoraAppId =
-      'YOUR_AGORA_APP_ID'; // TODO: Replace with actual App ID
+  static final String _agoraAppId =
+      dotenv.env['AGORA_APP_ID'] ?? 'YOUR_AGORA_APP_ID'; // TODO: Replace with actual App ID
 
   @override
   AuctionRoomState build() {
