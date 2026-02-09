@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/app_localizations.dart';
 import 'cores/config/env.dart';
+import 'cores/constants/colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'cores/config/flavor_config.dart';
@@ -74,6 +75,25 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) => ProviderScope(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            useMaterial3: false,
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: colors.backgroundDark,
+            canvasColor: colors.backgroundDark,
+            colorScheme: ColorScheme.dark(
+              surfaceTint: colors.backgroundDark,
+              surface: colors.surfaceDark,
+              primary: colors.primary,
+              secondary: colors.accent,
+              onSurfaceVariant: Colors.white,
+              onSurface: Colors.white,
+            ),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
+          ),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
