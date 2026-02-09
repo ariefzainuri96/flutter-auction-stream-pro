@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/auction_stage/views/auction_stage_view.dart';
 import '../../features/create_auction/views/create_auction_view.dart';
 import '../../features/lobby/views/lobby_view.dart';
 import '../../features/login/views/login_view.dart';
@@ -7,7 +8,8 @@ import 'router_constant.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
+    final args = settings.arguments;
+
     switch (settings.name) {
       case Routes.login:
         return MaterialPageRoute(
@@ -28,6 +30,13 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => const CreateAuctionView(),
+        );
+      case Routes.auctionStage:
+        final data = args as AuctionStageViewData;
+
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => AuctionStageView(args: data),
         );
       // case Routes.profileNakes:
       //   final data = args as ProfileNakesArgsModel;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/constants/enums/page_state.dart';
 import '../../../cores/routers/router_constant.dart';
 import '../../../cores/utils/navigation_service.dart';
+import '../../auction_stage/views/auction_stage_view.dart';
 import '../model/lobby_request_model.dart';
 import '../model/user_role.dart';
 
@@ -59,28 +60,16 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
       return;
     }
 
-    state = state.copyWith(lobbyState: PageState.loading);
+    // state = state.copyWith(lobbyState: PageState.loading);
 
-    try {
-      // TODO: Initialize Agora and Firebase services here
-      debugPrint('Entering room with:');
-      debugPrint('  Username: ${state.request.username}');
-      debugPrint('  Room ID: ${state.request.roomId}');
-      debugPrint('  Role: ${state.request.role.displayName}');
+    final data = AuctionStageViewData(
+      roomId: 'test-room1',
+      userId: 'viewer1',
+      username: 'viewer1',
+      hostId: int.parse('host'.hashCode.toString().substring(0, 8)),
+    );
 
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      state = state.copyWith(lobbyState: PageState.success);
-
-      // Navigate to auction room
-      // TODO: Replace with actual route when implemented
-      // NavigationService.pushNamed(Routes.auctionRoom);
-      debugPrint('Navigation to auction room would happen here');
-    } catch (e) {
-      debugPrint('Error entering room: $e');
-      state = state.copyWith(lobbyState: PageState.error);
-    }
+    NavigationService.pushNamed(Routes.auctionStage, args: data);
   }
 
   /// Test connection to services

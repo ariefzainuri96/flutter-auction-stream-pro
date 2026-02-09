@@ -3,213 +3,213 @@ import 'colors.dart';
 
 class _TextTheme {
   // size 10
-  final font10Bold = TextStyle(
+  final font10Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 10.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font10SemiBold = TextStyle(
+  final font10SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 10.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font10Medium = TextStyle(
+  final font10Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 10.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font10Reguler = TextStyle(
+  final font10Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 10.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 12
-  final font12Bold = TextStyle(
+  final font12Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 12.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font12SemiBold = TextStyle(
+  final font12SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 12.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font12Medium = TextStyle(
+  final font12Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 12.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font12Reguler = TextStyle(
+  final font12Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 12.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 14
-  final font14Bold = TextStyle(
+  final font14Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 14.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font14SemiBold = TextStyle(
+  final font14SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 14.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font14Medium = TextStyle(
+  final font14Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 14.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font14Reguler = TextStyle(
+  final font14Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 14.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 16
-  final font16Bold = TextStyle(
+  final font16Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 16.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font16SemiBold = TextStyle(
+  final font16SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 16.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font16Medium = TextStyle(
+  final font16Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 16.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font16Reguler = TextStyle(
+  final font16Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 16.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 18
-  final font18Bold = TextStyle(
+  final font18Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 18.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font18SemiBold = TextStyle(
+  final font18SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 18.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font18Medium = TextStyle(
+  final font18Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 18.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font18Reguler = TextStyle(
+  final font18Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 18.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 20
-  final font20Bold = TextStyle(
+  final font20Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 20.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font20SemiBold = TextStyle(
+  final font20SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 20.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font20Medium = TextStyle(
+  final font20Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 20.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font20Reguler = TextStyle(
+  final font20Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 20.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 
   // size 22
-  final font22Bold = TextStyle(
+  final font22Bold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 22.0,
     height: 1.5,
     fontWeight: FontWeight.bold,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font22SemiBold = TextStyle(
+  final font22SemiBold = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 22.0,
     height: 1.5,
     fontWeight: FontWeight.w600,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font22Medium = TextStyle(
+  final font22Medium = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 22.0,
     height: 1.5,
     fontWeight: FontWeight.w500,
-    color: colors.font,
+    color: Colors.white,
   );
-  final font22Reguler = TextStyle(
+  final font22Reguler = const TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: 22.0,
     height: 1.5,
     fontWeight: FontWeight.w400,
-    color: colors.font,
+    color: Colors.white,
   );
 }
 

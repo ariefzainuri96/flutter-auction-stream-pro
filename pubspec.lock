@@ -590,7 +590,7 @@ packages:
     source: hosted
     version: "1.0.5"
   iris_method_channel:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: iris_method_channel
       sha256: bfb5cfc6c6eae42da8cd1b35977a72d8b8881848a5dfc3d672e4760a907d11a0

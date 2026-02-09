@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/colors.dart';
 import 'tap_detector.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -23,7 +24,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => AppBar(
-        backgroundColor: backgroundColor ?? Colors.white,
+        backgroundColor: backgroundColor ?? colors.backgroundDark,
         centerTitle: isCenterTitle,
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,

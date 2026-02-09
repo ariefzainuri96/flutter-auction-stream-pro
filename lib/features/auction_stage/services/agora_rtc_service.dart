@@ -11,8 +11,11 @@ class AgoraRtcService {
   // Callbacks
   void Function(RtcConnection connection, int remoteUid, int elapsed)?
       onUserJoined;
-  void Function(RtcConnection connection, int remoteUid,
-      UserOfflineReasonType reason)? onUserOffline;
+  void Function(
+    RtcConnection connection,
+    int remoteUid,
+    UserOfflineReasonType reason,
+  )? onUserOffline;
   void Function(RtcConnection connection, RtcStats stats)? onLeaveChannel;
   void Function(RtcConnection connection, ConnectionChangedReasonType reason)?
       onConnectionStateChanged;
@@ -21,7 +24,7 @@ class AgoraRtcService {
   AgoraRtcService({required this.appId});
 
   /// Initialize the Agora RTC Engine
-  Future<void> initialize() async {
+  Future<void> initialize(bool isHost) async {
     debugPrint('[AgoraRtcService] Initializing with appId: $appId');
 
     // Request permissions
@@ -29,24 +32,30 @@ class AgoraRtcService {
 
     // Create RTC Engine
     _engine = createAgoraRtcEngine();
-    await _engine!.initialize(RtcEngineContext(
-      appId: appId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
+    await _engine!.initialize(
+      RtcEngineContext(
+        appId: appId,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
+    );
 
     // Register event handlers
     _engine!.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
           debugPrint(
-              '[AgoraRtcService] Successfully joined channel: ${connection.channelId}');
+            '[AgoraRtcService] Successfully joined channel: ${connection.channelId}',
+          );
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           debugPrint('[AgoraRtcService] User $remoteUid joined');
           onUserJoined?.call(connection, remoteUid, elapsed);
         },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
+        onUserOffline: (
+          RtcConnection connection,
+          int remoteUid,
+          UserOfflineReasonType reason,
+        ) {
           debugPrint('[AgoraRtcService] User $remoteUid offline: $reason');
           onUserOffline?.call(connection, remoteUid, reason);
         },
@@ -54,10 +63,14 @@ class AgoraRtcService {
           debugPrint('[AgoraRtcService] Left channel');
           onLeaveChannel?.call(connection, stats);
         },
-        onConnectionStateChanged: (RtcConnection connection,
-            ConnectionStateType state, ConnectionChangedReasonType reason) {
+        onConnectionStateChanged: (
+          RtcConnection connection,
+          ConnectionStateType state,
+          ConnectionChangedReasonType reason,
+        ) {
           debugPrint(
-              '[AgoraRtcService] Connection state changed: $state, reason: $reason');
+            '[AgoraRtcService] Connection state changed: $state, reason: $reason',
+          );
           onConnectionStateChanged?.call(connection, reason);
         },
         onError: (ErrorCodeType err, String msg) {
@@ -68,8 +81,9 @@ class AgoraRtcService {
     );
 
     // Enable video
-    await _engine!.enableVideo();
-    await _engine!.startPreview();
+    await _engine?.enableVideo();
+    await _engine?.startPreview();
+    await _engine?.muteLocalAudioStream(!isHost);
 
     debugPrint('[AgoraRtcService] Initialization complete');
   }
@@ -86,7 +100,8 @@ class AgoraRtcService {
     }
 
     debugPrint(
-        '[AgoraRtcService] Joining channel: $channelName as ${isHost ? "HOST" : "AUDIENCE"}');
+      '[AgoraRtcService] Joining channel: $channelName as ${isHost ? "HOST" : "AUDIENCE"}',
+    );
 
     // Set client role
     await _engine!.setClientRole(
@@ -131,7 +146,8 @@ class AgoraRtcService {
     if (_engine == null) return;
 
     debugPrint(
-        '[AgoraRtcService] Updating role to: ${isHost ? "BROADCASTER" : "AUDIENCE"}');
+      '[AgoraRtcService] Updating role to: ${isHost ? "BROADCASTER" : "AUDIENCE"}',
+    );
     await _engine!.setClientRole(
       role: isHost
           ? ClientRoleType.clientRoleBroadcaster
@@ -145,7 +161,8 @@ class AgoraRtcService {
 
     await _engine!.muteLocalAudioStream(!enabled);
     debugPrint(
-        '[AgoraRtcService] Microphone ${enabled ? "enabled" : "disabled"}');
+      '[AgoraRtcService] Microphone ${enabled ? "enabled" : "disabled"}',
+    );
   }
 
   /// Toggle camera

@@ -36,10 +36,10 @@ dev_dependencies:
     hive_ce_generator: ^1.9.3
     build_runner: ^2.4.11
 
-dependency_overrides:
-  # When using agora_rtm 2.2.2 with agora_rtc_engine 6.3.2, we need to override the iris_method_channel to 2.2.2,
-  # the issue will be fixed with the next release of agora_rtc_engine
-  iris_method_channel: ^2.2.2
+# dependency_overrides:
+#   # When using agora_rtm 2.2.2 with agora_rtc_engine 6.3.2, we need to override the iris_method_channel to 2.2.2,
+#   # the issue will be fixed with the next release of agora_rtc_engine
+#   iris_method_channel: ^2.2.2
 
 flutter_launcher_icons:
     android: 'launcher_icon'

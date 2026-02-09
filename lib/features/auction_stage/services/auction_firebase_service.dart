@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import '../../../cores/config/flavor_config.dart';
 
 /// Firebase Realtime Database service for atomic bidding
 class AuctionFirebaseService {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
   DatabaseReference? _auctionRef;
   StreamSubscription? _bidSubscription;
 
@@ -13,10 +14,19 @@ class AuctionFirebaseService {
       onBidUpdated;
   void Function(String error)? onError;
 
+  String get basePath =>
+      FlavorConfig.instance?.flavor == Flavor.prod ? 'prod' : 'stage';
+
   /// Initialize the auction reference
   void initialize(String roomId) {
     debugPrint('[AuctionFirebaseService] Initializing for room: $roomId');
-    _auctionRef = _database.ref('auctions/$roomId');
+
+    final firebaseApp = Firebase.app();
+    _auctionRef = FirebaseDatabase.instanceFor(
+      app: firebaseApp,
+      databaseURL:
+          'https://auction-stream-pro-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    ).ref('$basePath/auctions/$roomId');
   }
 
   /// Start listening to bid updates
@@ -54,13 +64,11 @@ class AuctionFirebaseService {
     required String roomId,
     required double startingBid,
     required String itemName,
-    required String hostId,
+    required int hostId,
   }) async {
     debugPrint('[AuctionFirebaseService] Creating auction for room: $roomId');
 
-    final auctionRef = _database.ref('auctions/$roomId');
-
-    await auctionRef.set({
+    await _auctionRef?.set({
       'roomId': roomId,
       'itemName': itemName,
       'hostId': hostId,
@@ -95,11 +103,11 @@ class AuctionFirebaseService {
         '[AuctionFirebaseService] Attempting to place bid: \$$bidAmount by $userId');
 
     try {
-      final bidRef = _auctionRef!.child('currentBid');
+      final bidRef = _auctionRef?.child('currentBid');
 
       // Use transaction to ensure atomic update
       final transactionResult =
-          await bidRef.runTransaction((Object? currentData) {
+          await bidRef?.runTransaction((Object? currentData) {
         if (currentData == null) {
           // First bid
           return Transaction.success({
@@ -131,7 +139,7 @@ class AuctionFirebaseService {
         });
       });
 
-      if (transactionResult.committed) {
+      if (transactionResult?.committed ?? false) {
         debugPrint(
             '[AuctionFirebaseService] Transaction committed successfully');
         return BidResult(

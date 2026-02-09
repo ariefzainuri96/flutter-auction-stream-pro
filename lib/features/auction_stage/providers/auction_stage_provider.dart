@@ -21,16 +21,11 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
   late final AuctionFirebaseService _firebaseService;
 
   // Configuration (In production, get from environment or secure storage)
-  static final String _agoraAppId =
-      dotenv.env['AGORA_APP_ID'] ?? 'YOUR_AGORA_APP_ID'; // TODO: Replace with actual App ID
+  static final String _agoraAppId = dotenv.env['AGORA_APP_ID'] ??
+      'YOUR_AGORA_APP_ID'; // TODO: Replace with actual App ID
 
   @override
   AuctionRoomState build() {
-    // Initialize with required parameters passed via arguments
-    // These would typically come from navigation arguments
-    final roomId = 'demo_room';
-    final userId = 'user_${DateTime.now().millisecondsSinceEpoch}';
-
     // Initialize services
     _rtcService = AgoraRtcService(appId: _agoraAppId);
     _rtmService = AgoraRtmService(appId: _agoraAppId);
@@ -46,9 +41,9 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     });
 
     // Return initial state
-    return AuctionRoomState(
-      roomId: roomId,
-      userId: userId,
+    return const AuctionRoomState(
+      roomId: '',
+      userId: '',
     );
   }
 
@@ -58,6 +53,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     required String userId,
     required String username,
     required bool isHost,
+    required int hostId,
     double? startingBid,
     String? itemName,
   }) {
@@ -65,6 +61,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       roomId: roomId,
       userId: userId,
       userRole: isHost ? UserRole.host : UserRole.audience,
+      hostId: hostId,
     );
 
     // Start connection
@@ -157,17 +154,19 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
           state.copyWith(connectionState: AuctionConnectionState.connecting);
 
       // 1. Initialize RTC
-      await _rtcService.initialize();
+      await _rtcService.initialize(isHost);
 
       // 2. Initialize RTM
       await _rtmService.initialize(userId: state.userId);
       await _rtmService.login(token: '', userId: state.userId);
 
+      final hasUserId = state.userId.hashCode.toString().substring(0, 8);
+
       // 3. Join RTC channel
       await _rtcService.joinChannel(
         token: '', // In production, generate token from server
         channelName: state.roomId,
-        uid: int.parse(state.userId.hashCode.toString().substring(0, 8)),
+        uid: int.parse(hasUserId),
         isHost: isHost,
       );
 
@@ -183,7 +182,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
           roomId: state.roomId,
           startingBid: startingBid,
           itemName: itemName,
-          hostId: state.userId,
+          hostId: state.hostId ?? 0,
         );
       }
 

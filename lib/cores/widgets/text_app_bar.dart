@@ -33,7 +33,10 @@ class TextAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: actions,
         title: showCustomTitle && customTitle != null
             ? customTitle
-            : Text(title, style: textTheme.font18Bold),
+            : Text(
+                title,
+                style: textTheme.font18Bold.copyWith(color: Colors.white),
+              ),
         backgroundColor: backgroundColor,
         isCenterTitle: isCenterTitle,
         bottom: bottom,

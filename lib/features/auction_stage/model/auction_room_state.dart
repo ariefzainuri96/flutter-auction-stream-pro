@@ -31,6 +31,7 @@ class AuctionRoomState extends Equatable {
   final bool isMicEnabled;
   final bool isCameraEnabled;
   final String? errorMessage;
+  final int? hostId;
 
   const AuctionRoomState({
     required this.roomId,
@@ -46,6 +47,7 @@ class AuctionRoomState extends Equatable {
     this.isMicEnabled = false,
     this.isCameraEnabled = false,
     this.errorMessage,
+    this.hostId,
   });
 
   AuctionRoomState copyWith({
@@ -62,6 +64,7 @@ class AuctionRoomState extends Equatable {
     bool? isMicEnabled,
     bool? isCameraEnabled,
     String? errorMessage,
+    int? hostId,
   }) =>
       AuctionRoomState(
         roomId: roomId ?? this.roomId,
@@ -77,6 +80,7 @@ class AuctionRoomState extends Equatable {
         isMicEnabled: isMicEnabled ?? this.isMicEnabled,
         isCameraEnabled: isCameraEnabled ?? this.isCameraEnabled,
         errorMessage: errorMessage ?? this.errorMessage,
+        hostId: hostId ?? this.hostId,
       );
 
   bool get isHost => userRole == UserRole.host;
@@ -98,6 +102,7 @@ class AuctionRoomState extends Equatable {
         isMicEnabled,
         isCameraEnabled,
         errorMessage,
+        hostId,
       ];
 }
 

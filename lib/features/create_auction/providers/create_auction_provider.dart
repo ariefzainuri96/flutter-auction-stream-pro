@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../cores/constants/enums/page_state.dart';
+import '../../../cores/routers/router_constant.dart';
+import '../../../cores/utils/navigation_service.dart';
+import '../../auction_stage/views/auction_stage_view.dart';
 import '../model/create_auction_request_model.dart';
 
 final createAuctionProvider = NotifierProvider.autoDispose<
@@ -140,31 +143,21 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
     // Start loading
     state = state.copyWith(createState: PageState.loading);
 
-    try {
-      // TODO: Implement Agora initialization and Firebase setup
-      debugPrint('Creating auction with:');
-      debugPrint('  Item Name: ${state.request.itemName}');
-      debugPrint('  Starting Bid: \$${state.request.startingBid}');
-      debugPrint('  Auction Title: ${state.request.auctionTitle}');
-      debugPrint('  Photo: ${state.request.photoPath}');
-      debugPrint('  Microphone: ${state.request.microphoneEnabled}');
-      debugPrint('  Camera: ${state.request.cameraEnabled}');
+    await Future.delayed(const Duration(milliseconds: 800));
 
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 800));
+    state = state.copyWith(createState: PageState.success);
 
-      state = state.copyWith(createState: PageState.success);
+    final data = AuctionStageViewData(
+      roomId: 'test-room1',
+      userId: 'host',
+      username: 'host',
+      isHost: true,
+      startingBid: state.request.startingBid,
+      itemName: state.request.itemName, 
+      hostId: int.parse('host'.hashCode.toString().substring(0, 8)),
+    );
 
-      // TODO: Navigate to auction room
-      // NavigationService.pushNamed(Routes.auctionRoom, arguments: state.request);
-      debugPrint('Navigation to auction room would happen here');
-    } catch (e) {
-      debugPrint('Error creating auction: $e');
-      state = state.copyWith(
-        createState: PageState.error,
-        errorMessage: 'Failed to start auction. Please try again.',
-      );
-    }
+    NavigationService.pushNamed(Routes.auctionStage, args: data);
   }
 
   /// Update entire request

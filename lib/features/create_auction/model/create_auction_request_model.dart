@@ -3,29 +3,24 @@ class CreateAuctionRequestModel {
   double? startingBid;
   String? auctionTitle;
   String? photoPath;
-  bool microphoneEnabled;
-  bool cameraEnabled;
 
   CreateAuctionRequestModel({
     this.itemName,
     this.startingBid,
     this.auctionTitle,
     this.photoPath,
-    this.microphoneEnabled = true,
-    this.cameraEnabled = true,
   });
 
   /// Validate that all mandatory fields are filled
-  bool get isValid {
-    return itemName != null &&
-        itemName!.trim().isNotEmpty &&
-        startingBid != null &&
-        startingBid! >= 0 &&
-        auctionTitle != null &&
-        auctionTitle!.trim().isNotEmpty &&
-        photoPath != null &&
-        photoPath!.trim().isNotEmpty;
-  }
+  bool get isValid =>
+      itemName != null &&
+      itemName!.trim().isNotEmpty &&
+      startingBid != null &&
+      startingBid! >= 0 &&
+      auctionTitle != null &&
+      auctionTitle!.trim().isNotEmpty &&
+      photoPath != null &&
+      photoPath!.trim().isNotEmpty;
 
   /// Validation error messages
   String? get itemNameError {
@@ -64,16 +59,11 @@ class CreateAuctionRequestModel {
     double? startingBid,
     String? auctionTitle,
     String? photoPath,
-    bool? microphoneEnabled,
-    bool? cameraEnabled,
-  }) {
-    return CreateAuctionRequestModel(
-      itemName: itemName ?? this.itemName,
-      startingBid: startingBid ?? this.startingBid,
-      auctionTitle: auctionTitle ?? this.auctionTitle,
-      photoPath: photoPath ?? this.photoPath,
-      microphoneEnabled: microphoneEnabled ?? this.microphoneEnabled,
-      cameraEnabled: cameraEnabled ?? this.cameraEnabled,
-    );
-  }
+  }) =>
+      CreateAuctionRequestModel(
+        itemName: itemName ?? this.itemName,
+        startingBid: startingBid ?? this.startingBid,
+        auctionTitle: auctionTitle ?? this.auctionTitle,
+        photoPath: photoPath ?? this.photoPath,
+      );
 }

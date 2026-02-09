@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/enums/page_state.dart';
+import '../../../cores/utils/size_helper.dart';
 import '../providers/lobby_provider.dart';
-import '../../../cores/widgets/custom_input_field.dart';
+import '../../../cores/widgets/shared_input_field.dart';
 import '../../../cores/widgets/glass_panel.dart';
 import '../../../cores/widgets/primary_button.dart';
 import '../../../cores/widgets/role_toggle.dart';
@@ -122,8 +123,8 @@ class LobbyView extends StatelessWidget {
               bottom: -200,
               right: -200,
               child: Container(
-                width: 600,
-                height: 400,
+                width: getScreenWidth,
+                height: getScreenHeight,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
 import '../../../cores/constants/enums/page_state.dart';
-import '../../../cores/widgets/custom_input_field.dart';
-import '../../../cores/widgets/hardware_check_row.dart';
+import '../../../cores/widgets/shared_input_field.dart';
 import '../../../cores/widgets/primary_button.dart';
+import '../../../cores/widgets/text_app_bar.dart';
 import '../providers/create_auction_provider.dart';
 
 class CreateAuctionView extends StatelessWidget {
@@ -15,13 +15,14 @@ class CreateAuctionView extends StatelessWidget {
   Widget build(BuildContext context) => BaseProviderView(
         provider: createAuctionProvider,
         useSafeArea: false,
+        appBar: (_, __) => const TextAppBar(
+          title: 'Create Auction',
+          isCenterTitle: false,
+        ),
         builder: (context, data, notifier) => Stack(
           children: [
             Column(
               children: [
-                // Header
-                _buildHeader(context),
-
                 // Main Content Area
                 Expanded(
                   child: SingleChildScrollView(
@@ -54,7 +55,31 @@ class CreateAuctionView extends StatelessWidget {
 
                         const SizedBox(height: 16),
 
-                        _buildStartingBidField(notifier, data),
+                        SharedInputField(
+                          label: 'Starting Bid (\$)',
+                          placeholder: 'e.g., 100.00',
+                          controller: notifier.startingBidController,
+                          prefixWidget: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '\$',
+                                style: TextStyle(
+                                  color: colors.slate400,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          onChanged: (value) {
+                            final updated = data.request.copyWith(
+                              startingBid: double.tryParse(value) ?? 0.0,
+                            );
+                            notifier.updateData(updated);
+                          },
+                        ),
+                        // _buildStartingBidField(notifier, data),
 
                         const SizedBox(height: 16),
 
@@ -69,11 +94,6 @@ class CreateAuctionView extends StatelessWidget {
                             notifier.updateData(updated);
                           },
                         ),
-
-                        const SizedBox(height: 24),
-
-                        // Hardware Check Section
-                        _buildHardwareCheckSection(data, notifier),
 
                         const SizedBox(height: 32),
                       ],
@@ -288,143 +308,64 @@ class CreateAuctionView extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            height: 56,
-            decoration: BoxDecoration(
-              color: colors.surfaceDark,
-              border: Border.all(
-                color: colors.surfaceBorder,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                // Dollar sign prefix
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 4),
-                  child: Text(
-                    '\$',
-                    style: TextStyle(
-                      color: colors.slate400,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
 
-                // Text field
-                Expanded(
-                  child: TextField(
-                    controller: notifier.startingBidController,
-                    onChanged: (value) {
-                      final updated = data.request.copyWith(
-                        startingBid: double.tryParse(value) ?? 0.0,
-                      );
-                      notifier.updateData(updated);
-                    },
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: '0.00',
-                      hintStyle: TextStyle(
-                        color: colors.slate500,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
+          // Container(
+          //   height: 56,
+          //   decoration: BoxDecoration(
+          //     color: colors.surfaceDark,
+          //     border: Border.all(
+          //       color: colors.surfaceBorder,
+          //       width: 1,
+          //     ),
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   child: Row(
+          //     children: [
+          //       // Dollar sign prefix
+          //       Padding(
+          //         padding: const EdgeInsets.only(left: 16, right: 4),
+          //         child: Text(
+          //           '\$',
+          //           style: TextStyle(
+          //             color: colors.slate400,
+          //             fontSize: 16,
+          //             fontWeight: FontWeight.w500,
+          //           ),
+          //         ),
+          //       ),
 
-  /// Build Hardware Check Section
-  Widget _buildHardwareCheckSection(
-    CreateAuctionNotifierData data,
-    CreateAuctionNotifier notifier,
-  ) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section Header
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 12),
-            child: Text(
-              'HARDWARE CHECK',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: colors.slate400,
-                letterSpacing: 1.2,
-              ),
-            ),
-          ),
-
-          // Hardware Check Container
-          Container(
-            decoration: BoxDecoration(
-              color: colors.surfaceDark,
-              border: Border.all(
-                color: colors.surfaceBorder,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                // Microphone Row
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: HardwareCheckRow(
-                    label: 'Microphone',
-                    icon: Icons.mic,
-                    enabled: data.request.microphoneEnabled,
-                    onChanged: (value) {
-                      final updated = data.request.copyWith(
-                        microphoneEnabled: value,
-                      );
-                      notifier.updateData(updated);
-                    },
-                  ),
-                ),
-
-                // Divider
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: colors.surfaceBorder,
-                  indent: 0,
-                  endIndent: 0,
-                ),
-
-                // Camera Row
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: HardwareCheckRow(
-                    label: 'Camera',
-                    icon: Icons.videocam,
-                    enabled: data.request.cameraEnabled,
-                    onChanged: (value) {
-                      final updated = data.request.copyWith(
-                        cameraEnabled: value,
-                      );
-                      notifier.updateData(updated);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          //       // Text field
+          //       Expanded(
+          //         child: TextField(
+          //           controller: notifier.startingBidController,
+          //           onChanged: (value) {
+          //             final updated = data.request.copyWith(
+          //               startingBid: double.tryParse(value) ?? 0.0,
+          //             );
+          //             notifier.updateData(updated);
+          //           },
+          //           keyboardType:
+          //               const TextInputType.numberWithOptions(decimal: true),
+          //           style: const TextStyle(
+          //             color: Colors.white,
+          //             fontSize: 16,
+          //           ),
+          //           decoration: InputDecoration(
+          //             hintText: '0.00',
+          //             hintStyle: TextStyle(
+          //               color: colors.slate500,
+          //             ),
+          //             border: InputBorder.none,
+          //             contentPadding: const EdgeInsets.symmetric(
+          //               horizontal: 8,
+          //               vertical: 16,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       );
 
