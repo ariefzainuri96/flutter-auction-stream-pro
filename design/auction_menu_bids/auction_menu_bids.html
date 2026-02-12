@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Host Moderation Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "electric-blue": "#00f0ff",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2231",
+                        "danger": "#ef4444",
+                        "success": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px -3px rgba(37, 106, 244, 0.3)',
+                        'glow-blue': '0 0 10px -2px rgba(0, 240, 255, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #256af4;
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-screen flex flex-col relative">
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="Abstract blurred background representing a live auction stage or studio" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBphBGTEi7vmfsfn6VdUzjAHqRuHRdpi0avBWNdVzRjsXM8ePLci3pYjk5_tlA-0laFg_q4zO_BMtAbxLd9JA-6jPQN7ZMpI6YvGfdRbAO-dtbuFgBKljbfVs5ilog2_KblYiL7SxAFtkFiZls9o8ZGj9N_m0TMoYhj_ef0GuK7XtSflAbJz9-Y4y2UPzY3NKqmSRK3pNWQTVny6nA2b92KFjIDEiwvvXwuFB4rxefxB8ld68euouzecPVl50GwAL5RzzeT8ahlpU-s');">
+<div class="absolute inset-0 bg-[#000000]/70 backdrop-blur-sm"></div>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-end">
+<div class="w-full bg-[#101622]/95 backdrop-blur-xl border-t border-[#314368] rounded-t-3xl shadow-2xl flex flex-col max-h-[85vh] transition-transform duration-300 ease-out">
+<div class="w-full flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+<div class="h-1.5 w-12 rounded-full bg-[#314368]"></div>
+</div>
+<div class="px-6 pb-4 pt-2">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<h2 class="text-xl font-bold tracking-tight text-white">Host Controls</h2>
+<span class="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-bold border border-primary/20">Live</span>
+</div>
+<button class="p-2 rounded-full hover:bg-white/5 transition-colors text-[#90a4cb]">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="flex gap-6 border-b border-[#314368]">
+<button class="flex items-center gap-2 pb-3 border-b-2 border-transparent text-[#90a4cb] font-medium text-sm hover:text-white transition-colors">
+                    Participants
+                    <span class="bg-[#314368] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">12</span>
+</button>
+<button class="flex items-center gap-2 pb-3 border-b-2 border-primary text-white font-medium text-sm transition-colors">
+                    Bids
+                </button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
+<div class="bg-surface-dark/50 rounded-xl p-4 flex items-center justify-between gap-3 border border-electric-blue/40 shadow-glow-blue bg-gradient-to-r from-electric-blue/5 to-transparent relative overflow-hidden">
+<div class="absolute top-0 right-0 px-2 py-1 bg-electric-blue text-background-dark text-[10px] font-bold rounded-bl-lg">Current High Bid</div>
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<div class="relative shrink-0">
+<div class="h-12 w-12 rounded-full bg-cover bg-center border-2 border-electric-blue" data-alt="Portrait of Sarah Jenkins" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDnESuuJaDah1mDSbPuxLtyRq4XBlFxN00OBVvrvdVNAW-Kx8XBYKpoGWXoVhP6DSqIUqRVPc95rsg-sNbagjVe1i8jKNMnj0snke307TYGwXcjz8t4g6HVJyQ96GY_-ggpQU9WkloYvNGHqLq6nsalsipDLhAzFQIyZYDeep5NC0ut67bETGkll6tc2hBrlox2fA_G3Uuiq8IKep-CW06Lid0bTghSST8YosZHFXiQQ4MuHtPXB1VGR2RWdRfz0g4vg2DQ4WBWCT7');"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="text-white text-sm font-semibold truncate">Sarah Jenkins</h3>
+<div class="flex items-center gap-1 text-[#90a4cb] text-xs">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Just now</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="text-electric-blue font-bold text-xl tracking-wide">$4,500</span>
+<span class="text-[10px] text-electric-blue/70 font-medium uppercase tracking-wider">Winning</span>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 flex items-center justify-between gap-3 border border-[#314368]/30 shadow-sm opacity-80">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<div class="relative shrink-0">
+<div class="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#314368]" data-alt="Portrait of David Kim" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAf6I_4ZY3KfOvsXFLmb7fm6FL3lBePXNxDenBeFb3LdptSUK2s17g8T6YGfUgpN4jpCFB7XYmJq-4pRj-aXxKkBGi-wzcyTzCm9iNR5i4EgNEe_dW-h7WQCXHifGEsxYCoeLJRtHneXDL3ikjri1We_jL3neJOYSl3_ax1qfxAq72LVb7mr4yQ13pDVElj6odkyo3wmJ5l6bUnAm286RV-Spi5cAUYYYs5gZz63JzK6D0iHXmm2Vo5MKZPRpOzkZUyWH6_rQoUrtSC');"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="text-white text-sm font-semibold truncate">David Kim</h3>
+<div class="flex items-center gap-1 text-[#90a4cb] text-xs">
+<span>2m ago</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="text-electric-blue/90 font-bold text-lg">$4,250</span>
+<span class="text-[10px] text-[#90a4cb] font-medium uppercase tracking-wider">Outbid</span>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 flex items-center justify-between gap-3 border border-[#314368]/30 shadow-sm opacity-60">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<div class="relative shrink-0">
+<div class="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#314368]" data-alt="Portrait of Michael Ross" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCJ0n3WjtwP3T84-QZQlEc580v_b4loqEWlL-id9AyKQ9pmJkusyuy38ydZKiuA17goqqELGPgXv2cVHHMEpFczBfITiHh6R9K204ETaj31btK5r5ngqyarY5vpWLBNwYMqHGbf15y-892LFTy0_AgKKmLnfU1EdBBYAVpNoNtLeOAZNCNoUAFSMiuFhQqnLbR_xihfUz14GsowEO6cnR55i6_NvWLm83WI6DiihOtzT1VVj9v9HZZus79vW330KXxd49aqB8aH0xVJ');"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="text-white text-sm font-semibold truncate">Michael Ross</h3>
+<div class="flex items-center gap-1 text-[#90a4cb] text-xs">
+<span>5m ago</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="text-electric-blue/70 font-bold text-lg">$3,800</span>
+<span class="text-[10px] text-[#90a4cb] font-medium uppercase tracking-wider">Outbid</span>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 flex items-center justify-between gap-3 border border-[#314368]/30 shadow-sm opacity-50">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<div class="relative shrink-0">
+<div class="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#314368]" data-alt="Portrait of Elena Rodriguez" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB_FdC5M_SeWKzw-LKsBhQXMoyIbLf6LpW4rvZleQ2_MdXGruRIw6nzTo7wgDy9cW__jXcalRF-y94PxFOZInHaZg8ptIRmz-EdHDpXcpwNul1Ox1f20Qm9bUQ7IL_DW8RYQzCIAgBbpmsQYJEIHVW7PrJT8jFf5GN5XOmatBIa1G7vGyaTYUL9nQCJdQxkIqxY1spEVnu9HNs1nA8iObJ-pzEH914acpXoi62V6Q3p24XfEej88nmXe056wJRgPmZk64BrqS-oSARt');"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="text-white text-sm font-semibold truncate">Elena Rodriguez</h3>
+<div class="flex items-center gap-1 text-[#90a4cb] text-xs">
+<span>8m ago</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="text-electric-blue/50 font-bold text-lg">$3,500</span>
+<span class="text-[10px] text-[#90a4cb] font-medium uppercase tracking-wider">Outbid</span>
+</div>
+</div>
+<div class="text-center pt-2 pb-6">
+<p class="text-[#90a4cb] text-xs">Displaying recent bids</p>
+</div>
+</div>
+<div class="bg-surface-dark border-t border-[#314368] p-4 pb-8 space-y-4 shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.5)]">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/20 rounded-lg text-primary">
+<span class="material-symbols-outlined">mic_off</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white">Mute All Participants</span>
+<span class="text-xs text-[#90a4cb]">Stop all incoming audio</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-[#314368] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<button class="w-full group flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-red-500/50 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200 font-semibold shadow-sm hover:shadow-glow">
+<span class="material-symbols-outlined group-hover:text-white transition-colors">gavel</span>
+<span>End Auction</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

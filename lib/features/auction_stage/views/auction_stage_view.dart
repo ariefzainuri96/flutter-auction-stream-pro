@@ -12,6 +12,7 @@ import '../model/auction_room_state.dart';
 import '../providers/auction_stage_provider.dart';
 import '../widgets/chat_overlay.dart';
 import '../widgets/custom_bid_sheet.dart';
+import '../widgets/auction_menu_sheet.dart';
 
 class AuctionStageViewData {
   final String roomId;
@@ -219,13 +220,8 @@ class AuctionStageView extends ConsumerWidget {
 
                 // Close button
                 GestureDetector(
-                  onTap: () async {
-                    final shouldLeave = await _showLeaveConfirmation(context);
-
-                    if (shouldLeave) {
-                      await notifier.leaveAuction();
-                    }
-                  },
+                  key: const Key('auction_stage_menu_button'),
+                  onTap: () => _showAuctionMenuSheet(context, data, notifier),
                   child: Container(
                     width: 40,
                     height: 40,
@@ -502,6 +498,27 @@ class AuctionStageView extends ConsumerWidget {
           await vm.placeCustomBid(amount);
         },
         onClose: () => Navigator.of(sheetContext).pop(),
+      ),
+    );
+  }
+
+  void _showAuctionMenuSheet(
+    BuildContext context,
+    AuctionRoomState data,
+    AuctionStageNotifier vm,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => AuctionMenuSheet(
+        data: data,
+        onEndOrLeavePressed: () async {
+          final shouldLeave = await _showLeaveConfirmation(context);
+          if (shouldLeave) {
+            await vm.leaveAuction();
+          }
+        },
       ),
     );
   }

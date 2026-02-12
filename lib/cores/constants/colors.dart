@@ -15,10 +15,16 @@ class _CustomColors {
   final surfaceDark = const Color(0xFF1E293B);
   final surfaceBorder = const Color(0xFF334155);
 
+  final electricBlue = const Color(0xFF3B82F6);
+  final sheetBackground = const Color(0xFF101622);
+  final sheetSurface = const Color(0xFF1A2231);
+  final sheetBorder = const Color(0xFF314368);
+  final mutedText = const Color(0xFF90A4CB);
+
   final slate200 = const Color(0xFFE2E8F0);
   final slate300 = const Color(0xFFCBD5E1);
   final slate400 = const Color(0xFF94A3B8);
-  final slate500 = const Color(0xFF64748B); 
+  final slate500 = const Color(0xFF64748B);
   final slate600 = const Color(0xFF475569);
 
   final red500 = const Color(0xFFEF4444);

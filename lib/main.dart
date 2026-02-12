@@ -46,19 +46,19 @@ void main() {
         ),
       );
 
-      if (kDebugMode) {
-        // Android Emulator uses 10.0.2.2 to access host machine
-        // iOS Simulator uses localhost
-        final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+      // if (kDebugMode) {
+      //   // Android Emulator uses 10.0.2.2 to access host machine
+      //   // iOS Simulator uses localhost
+      //   final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
 
-        try {
-          FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
-          FirebaseAuth.instance.useAuthEmulator(host, 9099);
-          debugPrint('🔌 Connected to Firebase Emulator at $host:5001');
-        } catch (e) {
-          debugPrint('⚠️ Emulator connection failed: $e');
-        }
-      }
+      //   try {
+      //     FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
+      //     FirebaseAuth.instance.useAuthEmulator(host, 9099);
+      //     debugPrint('🔌 Connected to Firebase Emulator at $host:5001');
+      //   } catch (e) {
+      //     debugPrint('⚠️ Emulator connection failed: $e');
+      //   }
+      // }
 
       await signInAnonymously();
 
