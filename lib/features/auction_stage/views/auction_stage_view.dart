@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
 import '../../../cores/utils/navigation_service.dart';
-import '../../../cores/widgets/bid_button.dart';
+import '../../../cores/utils/size_helper.dart';
 import '../../../cores/widgets/live_status_card.dart';
 import '../model/auction_room_state.dart';
 import '../providers/auction_stage_provider.dart';
@@ -82,16 +84,7 @@ class AuctionStageView extends ConsumerWidget {
               // Top header with live status and highest bid
               _buildTopHeader(context, data, vm),
 
-              // Chat overlay at bottom
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 140,
-                child: ChatOverlay(messages: data.messages),
-              ),
-
-              // Bottom control bar
-              _buildBottomControls(context, vm, data),
+              _buildBottomLayout(data, vm),
 
               // Loading indicator
               if (data.connectionState == AuctionConnectionState.connecting)
@@ -103,6 +96,31 @@ class AuctionStageView extends ConsumerWidget {
             ],
           );
         },
+      );
+
+  Widget _buildBottomLayout(AuctionRoomState data, AuctionStageNotifier vm) =>
+      Positioned(
+        left: 16,
+        right: 16,
+        bottom: getBottomPadding + 16,
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildChatPanel(data),
+                const SizedBox(
+                  width: 16,
+                ),
+                _buildActionColumn(vm, data),
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            _buildChatInput(vm),
+          ],
+        ),
       );
 
   /// Build video layer
@@ -210,7 +228,7 @@ class AuctionStageView extends ConsumerWidget {
                       ),
                     ),
                     child: const Icon(
-                      Icons.close,
+                      Icons.menu,
                       color: Colors.white,
                       size: 20,
                     ),
@@ -222,156 +240,209 @@ class AuctionStageView extends ConsumerWidget {
         ),
       );
 
-  /// Build bottom controls
-  Widget _buildBottomControls(
-    BuildContext context,
-    AuctionStageNotifier vm,
-    AuctionRoomState data,
-  ) =>
-      Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        child: SafeArea(
-          top: false,
+  /// Build chat panel that mirrors the glass-card layout
+  Widget _buildChatPanel(AuctionRoomState data) {
+    final infoMessage =
+        "${args.itemName ?? 'Auction item'}. Minimum bid increment is \$10.";
+
+    return Expanded(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.45),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 30,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left: Like/Heart button
-                _buildHeartButton(),
-
-                const Spacer(),
-
-                // Center: Request to Speak button
-                if (!data.isHost)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _buildSpeakButton(vm, data),
-                  ),
-
-                const Spacer(),
-
-                // Right: Bid button
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Quick bid presets (optional)
-                      _buildQuickBidPresets(vm),
-
-                      const SizedBox(height: 8),
-
-                      // Main bid button
-                      BidButton(
-                        label: 'Quick Bid',
-                        amountLabel: '+\$10',
-                        onTap: () => vm.placeBid(10),
+                Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 16, color: colors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        infoMessage,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: colors.slate300,
+                        ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.65),
+                          Colors.black.withOpacity(0.25),
+                        ],
+                      ),
+                    ),
+                    child: ChatOverlay(
+                      messages: data.messages,
+                      height: 220,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionColumn(
+    AuctionStageNotifier vm,
+    AuctionRoomState data,
+  ) {
+    final actions = <Widget>[];
+
+    if (!data.isHost) {
+      actions.add(_buildMicAction(vm, data));
+      actions.add(const SizedBox(height: 12));
+    }
+
+    actions.add(_buildQuickBidIncrement(vm));
+    actions.add(const SizedBox(height: 12));
+    actions.add(_buildNoteButton());
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: actions,
+    );
+  }
+
+  Widget _buildMicAction(AuctionStageNotifier vm, AuctionRoomState data) =>
+      GestureDetector(
+        onTap: () => vm.requestToSpeak(data.username ?? ''),
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: colors.primary,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: colors.primary.withOpacity(0.35),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.mic,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
       );
 
-  /// Build heart button
-  Widget _buildHeartButton() => Container(
+  Widget _buildQuickBidIncrement(AuctionStageNotifier vm) => GestureDetector(
+        onTap: () => vm.placeBid(10),
+        child: Container(
+          width: 68,
+          height: 68,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [colors.accent, colors.accentHover],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: colors.accent.withOpacity(0.45),
+                blurRadius: 20,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.arrow_upward, color: Colors.white, size: 26),
+              SizedBox(height: 4),
+              Text(
+                '+\$10',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _buildNoteButton() => Container(
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.favorite,
-          color: Colors.white,
-          size: 24,
-        ),
-      );
-
-  /// Build speak button
-  Widget _buildSpeakButton(AuctionStageNotifier vm, AuctionRoomState data) =>
-      GestureDetector(
-        onTap: () {
-          // TODO: Get host ID from room data
-          vm.requestToSpeak(data.username ?? '');
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: colors.primary,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.primary.withOpacity(0.3),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.mic,
-                color: Colors.white,
-                size: 28,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Speak',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: Colors.white.withOpacity(0.8),
-              ),
+          color: Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white.withOpacity(0.15)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
+        child: const Icon(Icons.edit_note, color: Colors.white),
       );
 
-  /// Build quick bid presets
-  Widget _buildQuickBidPresets(AuctionStageNotifier vm) => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _buildPresetButton('\$50', () => vm.placeBid(50)),
-          const SizedBox(width: 8),
-          _buildPresetButton('\$100', () => vm.placeBid(100)),
-        ],
-      );
-
-  /// Build preset button
-  Widget _buildPresetButton(String label, VoidCallback onTap) =>
-      GestureDetector(
-        onTap: onTap,
+  Widget _buildChatInput(AuctionStageNotifier vm) => SafeArea(
+        top: false,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.1),
-              width: 1,
-            ),
+            color: Colors.black.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+          child: Row(
+            children: [
+              const Icon(Icons.chat_bubble_outline, color: Colors.white70),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: colors.primary,
+                  decoration: const InputDecoration(
+                    hintText: 'Say something...',
+                    hintStyle: TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  onSubmitted: (value) => vm.sendChatMessage(value),
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.send, color: colors.primary),
+              ),
+            ],
           ),
         ),
       );

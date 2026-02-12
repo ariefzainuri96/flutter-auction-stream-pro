@@ -62,3 +62,4 @@ fvm flutter gen-l10n
 ## Firebase
 
 - to start firebase emulators run this command `firebase emulators:start`
+- to deploy firebase cloud functions run this command after cd to /functions `npm run deploy`

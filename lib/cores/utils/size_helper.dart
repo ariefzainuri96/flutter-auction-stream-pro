@@ -11,6 +11,9 @@ double get getScreenWidth =>
 double get getScreenHeight =>
     MediaQuery.sizeOf(NavigationService.globalContext).height;
 
+double get getBottomPadding =>
+    MediaQuery.of(NavigationService.globalContext).viewPadding.bottom;
+
 double get getCenterScreen =>
     (MediaQuery.sizeOf(NavigationService.globalContext).height -
         56.0 -

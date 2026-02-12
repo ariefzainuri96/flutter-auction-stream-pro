@@ -164,10 +164,14 @@ class ChatMessageItem extends StatelessWidget {
 /// Chat overlay widget - displays scrolling chat messages
 class ChatOverlay extends StatefulWidget {
   final List<ChatMessageModel> messages;
+  final double height;
+  final EdgeInsetsGeometry padding;
 
   const ChatOverlay({
     super.key,
     required this.messages,
+    this.height = 220,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   });
 
   @override
@@ -203,21 +207,11 @@ class _ChatOverlayState extends State<ChatOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 220,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            Colors.black.withOpacity(0.6),
-            Colors.transparent,
-          ],
-        ),
-      ),
+    return SizedBox(
+      height: widget.height,
       child: ListView.builder(
         controller: _scrollController,
+        padding: widget.padding,
         itemCount: widget.messages.length,
         itemBuilder: (context, index) {
           return ChatMessageItem(message: widget.messages[index]);

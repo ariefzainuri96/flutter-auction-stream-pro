@@ -65,12 +65,12 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     );
 
     // Start connection
-    _connectToAuction(
-      roomId: roomId,
-      isHost: isHost,
-      startingBid: startingBid,
-      itemName: itemName,
-    );
+    // _connectToAuction(
+    //   roomId: roomId,
+    //   isHost: isHost,
+    //   startingBid: startingBid,
+    //   itemName: itemName,
+    // );
   }
 
   /// Setup callbacks for all services
