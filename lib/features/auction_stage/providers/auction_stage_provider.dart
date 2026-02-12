@@ -216,6 +216,11 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       return;
     }
 
+    if (incrementAmount <= 0) {
+      _showError('Bid must be higher than the current highest bid');
+      return;
+    }
+
     final currentBid = state.currentBid;
     final newBid = currentBid + incrementAmount;
 
@@ -240,6 +245,16 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     } else {
       _showError(result.message);
     }
+  }
+
+  Future<void> placeCustomBid(double amount) async {
+    final incrementAmount = amount - state.currentBid;
+    if (incrementAmount <= 0) {
+      _showError('Bid must be higher than the current highest bid');
+      return;
+    }
+
+    await placeBid(incrementAmount);
   }
 
   /// Request to speak (audience -> host)

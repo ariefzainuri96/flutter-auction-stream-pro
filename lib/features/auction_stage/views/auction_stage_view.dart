@@ -11,6 +11,7 @@ import '../../../cores/widgets/live_status_card.dart';
 import '../model/auction_room_state.dart';
 import '../providers/auction_stage_provider.dart';
 import '../widgets/chat_overlay.dart';
+import '../widgets/custom_bid_sheet.dart';
 
 class AuctionStageViewData {
   final String roomId;
@@ -31,6 +32,8 @@ class AuctionStageViewData {
     this.itemName,
   });
 }
+
+const double _kMinBidIncrement = 10;
 
 /// Auction Stage View - Main live auction screen
 class AuctionStageView extends ConsumerWidget {
@@ -84,7 +87,7 @@ class AuctionStageView extends ConsumerWidget {
               // Top header with live status and highest bid
               _buildTopHeader(context, data, vm),
 
-              _buildBottomLayout(data, vm),
+              _buildBottomLayout(context, data, vm),
 
               // Loading indicator
               if (data.connectionState == AuctionConnectionState.connecting)
@@ -98,7 +101,11 @@ class AuctionStageView extends ConsumerWidget {
         },
       );
 
-  Widget _buildBottomLayout(AuctionRoomState data, AuctionStageNotifier vm) =>
+  Widget _buildBottomLayout(
+    BuildContext context,
+    AuctionRoomState data,
+    AuctionStageNotifier vm,
+  ) =>
       Positioned(
         left: 16,
         right: 16,
@@ -112,7 +119,7 @@ class AuctionStageView extends ConsumerWidget {
                 const SizedBox(
                   width: 16,
                 ),
-                _buildActionColumn(vm, data),
+                _buildActionColumn(context, vm, data),
               ],
             ),
             const SizedBox(
@@ -182,8 +189,11 @@ class AuctionStageView extends ConsumerWidget {
       );
 
   /// Build top header
-  Widget _buildTopHeader(BuildContext context, AuctionRoomState data,
-          AuctionStageNotifier notifier) =>
+  Widget _buildTopHeader(
+    BuildContext context,
+    AuctionRoomState data,
+    AuctionStageNotifier notifier,
+  ) =>
       Positioned(
         top: 0,
         left: 0,
@@ -221,11 +231,11 @@ class AuctionStageView extends ConsumerWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       color: colors.surfaceDark.withOpacity(0.85),
-                      shape: BoxShape.circle,
                       border: Border.all(
                         color: Colors.white.withOpacity(0.1),
                         width: 1,
                       ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.menu,
@@ -243,7 +253,7 @@ class AuctionStageView extends ConsumerWidget {
   /// Build chat panel that mirrors the glass-card layout
   Widget _buildChatPanel(AuctionRoomState data) {
     final infoMessage =
-        "${args.itemName ?? 'Auction item'}. Minimum bid increment is \$10.";
+        "${args.itemName ?? 'Auction item'}. Minimum bid increment is \$${_kMinBidIncrement.toInt()}";
 
     return Expanded(
       child: ClipRRect(
@@ -311,6 +321,7 @@ class AuctionStageView extends ConsumerWidget {
   }
 
   Widget _buildActionColumn(
+    BuildContext context,
     AuctionStageNotifier vm,
     AuctionRoomState data,
   ) {
@@ -323,9 +334,10 @@ class AuctionStageView extends ConsumerWidget {
 
     actions.add(_buildQuickBidIncrement(vm));
     actions.add(const SizedBox(height: 12));
-    actions.add(_buildNoteButton());
+    actions.add(_buildCustomBidButton(context, vm, data));
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: actions,
     );
@@ -359,15 +371,15 @@ class AuctionStageView extends ConsumerWidget {
   Widget _buildQuickBidIncrement(AuctionStageNotifier vm) => GestureDetector(
         onTap: () => vm.placeBid(10),
         child: Container(
-          width: 68,
-          height: 68,
+          width: 54,
+          height: 54,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [colors.accent, colors.accentHover],
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: colors.accent.withOpacity(0.45),
@@ -379,14 +391,14 @@ class AuctionStageView extends ConsumerWidget {
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.arrow_upward, color: Colors.white, size: 26),
+              Icon(Icons.arrow_upward, color: Colors.white, size: 22),
               SizedBox(height: 4),
               Text(
                 '+\$10',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -394,22 +406,48 @@ class AuctionStageView extends ConsumerWidget {
         ),
       );
 
-  Widget _buildNoteButton() => Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white.withOpacity(0.15)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+  Widget _buildCustomBidButton(
+    BuildContext context,
+    AuctionStageNotifier vm,
+    AuctionRoomState data,
+  ) =>
+      GestureDetector(
+        onTap: () => _showCustomBidSheet(context, vm, data),
+        child: Container(
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withOpacity(0.15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.edit_note,
+                color: Colors.white,
+                size: 22,
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Custom',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
-        child: const Icon(Icons.edit_note, color: Colors.white),
       );
 
   Widget _buildChatInput(AuctionStageNotifier vm) => SafeArea(
@@ -418,7 +456,7 @@ class AuctionStageView extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
           child: Row(
@@ -446,6 +484,27 @@ class AuctionStageView extends ConsumerWidget {
           ),
         ),
       );
+
+  void _showCustomBidSheet(
+    BuildContext context,
+    AuctionStageNotifier vm,
+    AuctionRoomState data,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => CustomBidSheet(
+        currentBid: data.currentBid,
+        minIncrement: _kMinBidIncrement,
+        onPlaceBid: (amount) async {
+          Navigator.of(sheetContext).pop();
+          await vm.placeCustomBid(amount);
+        },
+        onClose: () => Navigator.of(sheetContext).pop(),
+      ),
+    );
+  }
 
   /// Build loading overlay
   Widget _buildLoadingOverlay() => Positioned.fill(
