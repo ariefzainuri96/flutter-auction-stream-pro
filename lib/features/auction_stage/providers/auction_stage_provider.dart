@@ -61,7 +61,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       roomId: roomId,
       uid: uid,
       userRole: isHost ? UserRole.host : UserRole.audience,
-      hostId: hostId,      
+      hostId: hostId,
     );
 
     // Start connection
@@ -149,7 +149,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       state =
           state.copyWith(connectionState: AuctionConnectionState.connecting);
 
-      final token = await generateToken(
+      final (rtcToken, rtmToken) = await generateToken(
         channelName: state.roomId,
         uid: state.uid ?? 0,
         role: isHost ? 'publisher' : 'subscriber',
@@ -160,11 +160,11 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
 
       // 2. Initialize RTM
       await _rtmService.initialize(userId: state.uid.toString());
-      await _rtmService.login(token: token, userId: state.uid.toString());
+      await _rtmService.login(token: rtmToken, userId: state.uid.toString());
 
       // 3. Join RTC channel
       await _rtcService.joinChannel(
-        token: token,
+        token: rtcToken,
         channelName: state.roomId,
         uid: state.uid ?? 0,
         isHost: isHost,

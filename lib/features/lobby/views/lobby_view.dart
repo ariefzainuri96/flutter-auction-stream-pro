@@ -2,25 +2,37 @@ import 'package:flutter/material.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/enums/page_state.dart';
 import '../../../cores/utils/size_helper.dart';
+import '../../../cores/widgets/text_app_bar.dart';
+import '../model/lobby_view_data.dart';
 import '../providers/lobby_provider.dart';
 import '../../../cores/widgets/shared_input_field.dart';
 import '../../../cores/widgets/glass_panel.dart';
 import '../../../cores/widgets/primary_button.dart';
-import '../../../cores/widgets/role_toggle.dart';
 import '../../../cores/constants/colors.dart';
 
 class LobbyView extends StatelessWidget {
-  final int hostId;
+  final LobbyViewData args;
 
   const LobbyView({
     super.key,
-    required this.hostId,
+    required this.args,
   });
 
   @override
   Widget build(BuildContext context) => BaseProviderView(
-        provider: lobbyProvider,
-        builder: (context, data, notifier) => Stack(
+      provider: lobbyProvider,
+      appBar: (vm, data) => const TextAppBar(
+            title: 'Auction Lobby',
+            isCenterTitle: false,
+          ),
+      builder: (context, data, vm) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          vm.initializeWithParams(
+            args: args,
+          );
+        });
+
+        return Stack(
           children: [
             // Ambient background gradient
             _buildBackgroundGradients(),
@@ -38,12 +50,7 @@ class LobbyView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 32),
-
-                          // Hero section
-                          _buildHeroSection(),
-
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 8),
 
                           // Configuration card
                           SharedGlassPanel(
@@ -59,8 +66,13 @@ class LobbyView extends StatelessWidget {
                                   label: 'Username',
                                   placeholder: 'e.g. BidderOne',
                                   prefixIcon: Icons.badge_outlined,
-                                  controller: notifier.usernameController,
-                                  onChanged: notifier.updateUsername,
+                                  controller: vm.usernameController,
+                                  onChanged: (value) {
+                                    final updated = data.request.copyWith(
+                                      username: value,
+                                    );
+                                    vm.updateRequest(updated);
+                                  },
                                 ),
 
                                 const SizedBox(height: 24),
@@ -71,18 +83,15 @@ class LobbyView extends StatelessWidget {
                                   placeholder: '883-291',
                                   prefixIcon: Icons.tag_outlined,
                                   suffixIcon: Icons.qr_code_scanner_outlined,
-                                  controller: notifier.roomIdController,
-                                  onChanged: notifier.updateRoomId,
+                                  controller: vm.roomIdController,
+                                  onChanged: (value) {
+                                    final updated = data.request.copyWith(
+                                      roomId: value,
+                                    );
+                                    vm.updateRequest(updated);
+                                  },
                                   keyboardType: TextInputType.text,
                                   isMonospaced: true,
-                                ),
-
-                                const SizedBox(height: 24),
-
-                                // Role toggle
-                                SharedRoleToggle(
-                                  selectedRole: data.request.role,
-                                  onRoleChanged: notifier.updateRole,
                                 ),
                               ],
                             ),
@@ -94,16 +103,11 @@ class LobbyView extends StatelessWidget {
                           SharedPrimaryButton(
                             text: 'Enter Room',
                             trailingIcon: Icons.login_outlined,
-                            onPressed: () => notifier.enterRoom(0),
+                            onPressed: () => vm.enterRoom(0),
                             isLoading: data.lobbyState == PageState.loading,
                           ),
 
-                          const SizedBox(height: 16),
-
-                          // Footer links
-                          _buildFooterLinks(notifier),
-
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 24),
 
                           // Powered by text
                           _buildPoweredBy(),
@@ -117,8 +121,8 @@ class LobbyView extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      );
+        );
+      });
 
   Widget _buildBackgroundGradients() => Positioned.fill(
         child: Stack(
@@ -161,31 +165,6 @@ class LobbyView extends StatelessWidget {
             ),
           ],
         ),
-      );
-
-  Widget _buildHeroSection() => Column(
-        children: [
-          const Text(
-            'AuctionStream Pro Room Lobby',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              height: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Configure your settings to join the live atomic auction stream.',
-            style: TextStyle(
-              fontSize: 14,
-              color: colors.slate400,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       );
 
   Widget _buildAvatarPreview() => Stack(
@@ -237,45 +216,10 @@ class LobbyView extends StatelessWidget {
         ],
       );
 
-  Widget _buildFooterLinks(LobbyNotifier notifier) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextButton(
-            onPressed: notifier.createNewRoom,
-            child: const Text(
-              'Create New Room',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF94A3B8),
-              ),
-            ),
-          ),
-          Container(
-            width: 4,
-            height: 4,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: colors.slate600, // slate-600
-              shape: BoxShape.circle,
-            ),
-          ),
-          TextButton(
-            onPressed: notifier.testConnection,
-            child: const Text(
-              'Test Connection',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF94A3B8),
-              ),
-            ),
-          ),
-        ],
-      );
-
   Widget _buildPoweredBy() => Text(
-        'POWERED BY ATOMIC SYNC',
+        'POWERED BY Agora',
         style: TextStyle(
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
           color: colors.slate600, // slate-600
           letterSpacing: 1.5,

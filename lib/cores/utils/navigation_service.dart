@@ -48,6 +48,12 @@ class NavigationService {
   static Future<void> pop({Object? callback}) async =>
       navigationKey.currentState?.pop(callback);
 
+  static Future<void> popXTimes(int count) async {
+    for (int i = 0; i < count; i++) {
+      navigationKey.currentState?.pop();
+    }
+  }
+
   static Future<void> popUntilNamed(String routeName) async =>
       navigationKey.currentState
           ?.popUntil((route) => route.settings.name == routeName);

@@ -95,6 +95,21 @@ class CreateAuctionView extends StatelessWidget {
                           },
                         ),
 
+                        const SizedBox(height: 16),
+
+                        // Form Fields
+                        SharedInputField(
+                          label: 'Username',
+                          placeholder: 'e.g., card_seller99',
+                          controller: notifier.usernameController,
+                          onChanged: (value) {
+                            final updated = data.request.copyWith(
+                              username: value,
+                            );
+                            notifier.updateData(updated);
+                          },
+                        ),
+
                         const SizedBox(height: 32),
                       ],
                     ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +18,7 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
   final TextEditingController itemNameController = TextEditingController();
   final TextEditingController startingBidController = TextEditingController();
   final TextEditingController auctionTitleController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   @override
   CreateAuctionNotifierData build() {
@@ -23,6 +26,7 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
       itemNameController.dispose();
       startingBidController.dispose();
       auctionTitleController.dispose();
+      usernameController.dispose();
     });
 
     return CreateAuctionNotifierData(
@@ -44,7 +48,7 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
         source: fromCamera ? ImageSource.camera : ImageSource.gallery,
         maxWidth: 1920,
         maxHeight: 1920,
-        imageQuality: 85,
+        imageQuality: 70,
       );
 
       if (image != null) {
@@ -144,16 +148,17 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
     // Start loading
     state = state.copyWith(createState: PageState.loading);
 
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 700));
 
     state = state.copyWith(createState: PageState.success);
 
-    final uid =
-        int.parse(state.request.username.hashCode.toString().substring(0, 8));
+    final uid = Random().nextInt(1 << 31);
+    debugPrint('Generated random UID: $uid');
+    final roomId = Random().nextInt(1 << 31);
 
     final data = AuctionStageViewData(
-      roomId:
-          '${state.request.auctionTitle ?? ''}_${DateTime.now().millisecondsSinceEpoch}',
+      // roomId: roomId.toString(),
+      roomId: 'test-room1',
       uid: uid,
       username: state.request.username ?? '',
       isHost: true,

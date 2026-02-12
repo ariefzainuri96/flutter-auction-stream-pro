@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../features/auction_list/views/auction_list_view.dart';
 import '../../features/auction_stage/views/auction_stage_view.dart';
 import '../../features/create_auction/views/create_auction_view.dart';
+import '../../features/lobby/model/lobby_view_data.dart';
 import '../../features/lobby/views/lobby_view.dart';
 import '../../features/login/views/login_view.dart';
 import '../../features/splash/views/splash_view.dart';
@@ -23,10 +24,10 @@ class RouteGenerator {
           builder: (context) => const SplashView(),
         );
       case Routes.lobby:
-        final data = args as int;
+        final data = args as LobbyViewData;
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => LobbyView(hostId: data),
+          builder: (context) => LobbyView(args: data),
         );
       case Routes.auctionList:
         return MaterialPageRoute(

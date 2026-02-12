@@ -58,3 +58,7 @@ To regenerate localization after editing ARB files run:
 ```bash
 fvm flutter gen-l10n
 ```
+
+## Firebase
+
+- to start firebase emulators run this command `firebase emulators:start`

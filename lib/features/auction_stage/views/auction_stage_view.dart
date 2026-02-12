@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
+import '../../../cores/utils/navigation_service.dart';
 import '../../../cores/widgets/bid_button.dart';
 import '../../../cores/widgets/live_status_card.dart';
 import '../model/auction_room_state.dart';
@@ -445,7 +446,7 @@ class AuctionStageView extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => NavigationService.popXTimes(2),
             child: Text(
               'Leave',
               style: TextStyle(color: colors.red500),

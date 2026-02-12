@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
 import '../../../cores/constants/enums/page_state.dart';
+import '../../../cores/routers/router_constant.dart';
+import '../../../cores/utils/navigation_service.dart';
+import '../../../cores/utils/size_helper.dart';
 import '../../../cores/widgets/shared_input_field.dart';
+import '../../lobby/model/lobby_view_data.dart';
 import '../model/auction_list_notifier_data.dart';
 import '../providers/auction_list_provider.dart';
 import '../widgets/auction_card.dart';
@@ -215,9 +219,10 @@ class AuctionListView extends StatelessWidget {
           GridView.builder(
             controller: vm.scrollController,
             padding: const EdgeInsets.all(20),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.575,
+              // childAspectRatio: 0.575,
+              mainAxisExtent: cardHeight,
               crossAxisSpacing: 16,
               mainAxisSpacing: 24,
             ),
@@ -239,8 +244,16 @@ class AuctionListView extends StatelessWidget {
               return AuctionCard(
                 auction: auction,
                 onTap: () {
-                  // TODO: Navigate to auction detail/stage
-                  debugPrint('Tapped on auction: ${auction.itemName}');
+                  final hostId = int.tryParse(
+                        'host'.hashCode.toString().substring(0, 8),
+                      ) ??
+                      0;
+                  const roomId = 'test-room1';
+
+                  NavigationService.pushNamed(
+                    Routes.lobby,
+                    args: LobbyViewData(hostId: hostId, roomId: roomId),
+                  );
                 },
               );
             },
@@ -252,8 +265,7 @@ class AuctionListView extends StatelessWidget {
             bottom: 24,
             child: FloatingActionButton(
               onPressed: () {
-                // TODO: Navigate to create auction
-                debugPrint('Create auction tapped');
+                NavigationService.pushNamed(Routes.createAuction);
               },
               backgroundColor: colors.primary,
               child: Container(
@@ -288,5 +300,14 @@ class AuctionListView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  double get cardHeight {
+    double screenWidth = getScreenWidth;
+    double padding = 32; // Total horizontal padding (e.g., 16 on each side)
+    double spacing = 16; // Gap between columns
+    double columnWidth = (screenWidth - padding - spacing) / 2;
+
+    return (columnWidth * 1.25) + 86;
   }
 }

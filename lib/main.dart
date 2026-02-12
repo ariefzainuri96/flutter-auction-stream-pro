@@ -53,8 +53,7 @@ void main() {
 
         try {
           FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
-          FirebaseAuth.instance
-              .useAuthEmulator(host, 9099); // Optional: if using Auth emulator
+          FirebaseAuth.instance.useAuthEmulator(host, 9099);
           debugPrint('🔌 Connected to Firebase Emulator at $host:5001');
         } catch (e) {
           debugPrint('⚠️ Emulator connection failed: $e');

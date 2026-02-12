@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/constants/enums/page_state.dart';
@@ -5,7 +6,7 @@ import '../../../cores/routers/router_constant.dart';
 import '../../../cores/utils/navigation_service.dart';
 import '../../auction_stage/views/auction_stage_view.dart';
 import '../model/lobby_request_model.dart';
-import '../model/user_role.dart';
+import '../model/lobby_view_data.dart';
 
 final lobbyProvider =
     NotifierProvider.autoDispose<LobbyNotifier, LobbyNotifierData>(
@@ -29,24 +30,6 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
     );
   }
 
-  void updateUsername(String value) {
-    state = state.copyWith(
-      request: state.request.copyWith(username: value),
-    );
-  }
-
-  void updateRoomId(String value) {
-    state = state.copyWith(
-      request: state.request.copyWith(roomId: value),
-    );
-  }
-
-  void updateRole(UserRole role) {
-    state = state.copyWith(
-      request: state.request.copyWith(role: role),
-    );
-  }
-
   void updateRequest(LobbyRequestModel value) {
     state = state.copyWith(request: value);
   }
@@ -60,13 +43,15 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
       return;
     }
 
-    // state = state.copyWith(lobbyState: PageState.loading);
+    state = state.copyWith(lobbyState: PageState.loading);
 
-    final uid = '${state.request.username}'.hashCode.toString().substring(0, 8);
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    state = state.copyWith(lobbyState: PageState.success);
 
     final data = AuctionStageViewData(
       roomId: state.request.roomId ?? '',
-      uid: int.tryParse(uid) ?? 0,
+      uid: Random().nextInt(1 << 31),
       username: state.request.username ?? '',
       hostId: hostId,
     );
@@ -74,15 +59,8 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
     NavigationService.pushNamed(Routes.auctionStage, args: data);
   }
 
-  /// Test connection to services
-  Future<void> testConnection() async {
-    debugPrint('Testing Agora and Firebase connection...');
-    // TODO: Implement connection test logic
-  }
-
-  /// Create a new room
-  Future<void> createNewRoom() async {
-    NavigationService.pushNamed(Routes.createAuction);
+  void initializeWithParams({required LobbyViewData args}) {
+    roomIdController.text = args.roomId;
   }
 }
 

@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 
 import '../config/flavor_config.dart';
 
+const String generateAgoraTokenUrl =
+    'https://generateagoratoken-pkqdrvmzdq-uc.a.run.app';
+
 Future<void> signInAnonymously() async {
   try {
     final userCredential = await FirebaseAuth.instance.signInAnonymously();
@@ -14,13 +17,13 @@ Future<void> signInAnonymously() async {
   }
 }
 
-Future<String> generateToken({
+Future<(String, String)> generateToken({
   required String channelName,
   required int uid,
   required String role, // 'publisher' or 'subscriber'
 }) async {
   try {
-    // 1. Ensure User is Authenticated (Anonymous is fine)
+    HttpsCallable callable;
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       debugPrint('⚠️ User not logged in. Signing in anonymously...');
@@ -28,28 +31,28 @@ Future<String> generateToken({
       user = cred.user;
     }
 
-    // 2. Get the Functions Instance
-    // IMPORTANT: If you deployed to Jakarta, add: region: 'asia-southeast2'
-    final functions = FirebaseFunctions.instance;
+    debugPrint('✅ User authenticated: ${user?.uid}');
 
-    // 3. Define the Callable
-    final callable = functions.httpsCallable('generateAgoraToken');
+    if (kDebugMode) {
+      callable = FirebaseFunctions.instance.httpsCallable('generateAgoraToken');
+    } else {
+      callable = FirebaseFunctions.instance.httpsCallableFromUri(
+        Uri.parse(generateAgoraTokenUrl),
+      );
+    }
 
-    // 4. Call the function
-    // Note: We don't need to wrap in 'data'. The SDK does it automatically.
     final result = await callable.call({
       'channelName': channelName,
       'uid': uid,
       'role': role,
-      'env': FlavorConfig.instance?.flavor == Flavor.prod
-          ? 'prod'
-          : 'dev', // Send env flag dynamically
+      'env': FlavorConfig.instance?.flavor == Flavor.prod ? 'prod' : 'dev',
     });
 
-    // 5. Extract the token
-    final String token = result.data['token'];
-    debugPrint('✅ Token generated: $token');
-    return token;
+    final String rtcToken = result.data['rtcToken'];
+    final String rtmToken = result.data['rtmToken'];
+    debugPrint('✅ RTC Token generated: $rtcToken');
+    debugPrint('✅ RTM Token generated: $rtmToken');
+    return (rtcToken, rtmToken);
   } catch (e) {
     debugPrint('❌ Error generating token: $e');
     if (e is FirebaseFunctionsException) {
