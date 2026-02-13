@@ -32,7 +32,7 @@ class AuctionCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
-                        auction.imageUrl,
+                        auction.imageUrl ?? '',
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
@@ -90,7 +90,7 @@ class AuctionCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'LIVE • ${_formatViewerCount(auction.viewerCount)}',
+                              'LIVE • ${_formatViewerCount(auction.viewerCount ?? 0)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -111,7 +111,7 @@ class AuctionCard extends StatelessWidget {
 
             // Item name
             Text(
-              auction.itemName,
+              auction.itemName ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -126,7 +126,7 @@ class AuctionCard extends StatelessWidget {
 
             // Current bid
             Text(
-              '\$${_formatPrice(auction.currentBid)}',
+              '\$${_formatPrice(auction.currentBid ?? 0)}',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
@@ -152,7 +152,7 @@ class AuctionCard extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: Image.network(
-                      auction.hostAvatarUrl,
+                      auction.hostAvatarUrl ?? '',
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: colors.surfaceDark,

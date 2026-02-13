@@ -42,9 +42,6 @@ class AuctionListView extends StatelessWidget {
               ),
             ),
 
-            // Category Filters
-            _buildCategoryFilters(data, vm),
-
             const SizedBox(height: 16),
 
             // Divider
@@ -82,31 +79,6 @@ class AuctionListView extends StatelessWidget {
           ),
         ),
       );
-
-  Widget _buildCategoryFilters(
-    AuctionListNotifierData data,
-    AuctionListNotifier vm,
-  ) {
-    final categories = ['All', 'Electronics', 'Art', 'Sports', 'Fashion'];
-
-    return SizedBox(
-      height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: categories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          return CategoryChip(
-            label: category,
-            isSelected: data.selectedCategory == category,
-            onTap: () => vm.selectCategory(category),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _buildContent(
     BuildContext context,
@@ -177,7 +149,7 @@ class AuctionListView extends StatelessWidget {
     }
 
     // Empty state
-    if (data.pageState == PageState.empty || data.filteredAuctions.isEmpty) {
+    if (data.pageState == PageState.empty || data.auctions.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -217,6 +189,7 @@ class AuctionListView extends StatelessWidget {
       child: Stack(
         children: [
           GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
             controller: vm.scrollController,
             padding: const EdgeInsets.all(20),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -227,9 +200,9 @@ class AuctionListView extends StatelessWidget {
               mainAxisSpacing: 24,
             ),
             itemCount:
-                data.filteredAuctions.length + (data.isLoadingMore ? 1 : 0),
+                data.auctions.length + (data.isLoadingMore ? 1 : 0),
             itemBuilder: (context, index) {
-              if (index == data.filteredAuctions.length) {
+              if (index == data.auctions.length) {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -240,7 +213,7 @@ class AuctionListView extends StatelessWidget {
                 );
               }
 
-              final auction = data.filteredAuctions[index];
+              final auction = data.auctions[index];
               return AuctionCard(
                 auction: auction,
                 onTap: () {

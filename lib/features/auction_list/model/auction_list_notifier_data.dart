@@ -3,7 +3,6 @@ import 'auction_item_model.dart';
 
 class AuctionListNotifierData {
   final List<AuctionItemModel> auctions;
-  final List<AuctionItemModel> filteredAuctions;
   final PageState pageState;
   final String selectedCategory;
   final String searchQuery;
@@ -14,7 +13,6 @@ class AuctionListNotifierData {
 
   AuctionListNotifierData({
     required this.auctions,
-    required this.filteredAuctions,
     required this.pageState,
     required this.selectedCategory,
     required this.searchQuery,
@@ -37,7 +35,6 @@ class AuctionListNotifierData {
   }) =>
       AuctionListNotifierData(
         auctions: auctions ?? this.auctions,
-        filteredAuctions: filteredAuctions ?? this.filteredAuctions,
         pageState: pageState ?? this.pageState,
         selectedCategory: selectedCategory ?? this.selectedCategory,
         searchQuery: searchQuery ?? this.searchQuery,

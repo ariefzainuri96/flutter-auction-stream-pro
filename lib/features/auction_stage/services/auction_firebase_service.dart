@@ -3,9 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../../cores/config/flavor_config.dart';
+import '../../auction_list/model/auction_item_model.dart';
 
 /// Firebase Realtime Database service for atomic bidding
 class AuctionFirebaseService {
+  static const String _databaseUrl =
+      'https://auction-stream-pro-default-rtdb.asia-southeast1.firebasedatabase.app/';
   DatabaseReference? _auctionRef;
   StreamSubscription? _bidSubscription;
 
@@ -24,8 +27,7 @@ class AuctionFirebaseService {
     final firebaseApp = Firebase.app();
     _auctionRef = FirebaseDatabase.instanceFor(
       app: firebaseApp,
-      databaseURL:
-          'https://auction-stream-pro-default-rtdb.asia-southeast1.firebasedatabase.app/',
+      databaseURL: _databaseUrl,
     ).ref('$basePath/auctions/$roomId');
   }
 
@@ -205,6 +207,135 @@ class AuctionFirebaseService {
     await _bidSubscription?.cancel();
     _bidSubscription = null;
     _auctionRef = null;
+  }
+
+  DatabaseReference get _auctionsRootRef {
+    final firebaseApp = Firebase.app();
+    return FirebaseDatabase.instanceFor(
+      app: firebaseApp,
+      databaseURL: _databaseUrl,
+    ).ref('$basePath/auctions');
+  }
+
+  /// Fetch auctions in pages of [limit], optionally starting after [startAfter]
+  Future<List<AuctionItemModel>> fetchAuctions({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    Query query = _auctionsRootRef.orderByChild('startedAt');
+
+    if (startAfter != null) {
+      query = query.startAfter(startAfter.millisecondsSinceEpoch);
+    }
+
+    final snapshot = await query.limitToFirst(limit).get();
+    return _mapSnapshotToAuctionList(snapshot);
+  }
+
+  /// Search auctions by item name prefix using Firebase query
+  Future<List<AuctionItemModel>> searchAuctions({
+    required String query,
+    int limit = 10,
+    String? startAfterItemName,
+  }) async {
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) {
+      return [];
+    }
+
+    Query searchQuery = _auctionsRootRef.orderByChild('itemName');
+    searchQuery =
+        searchQuery.startAt(trimmedQuery).endAt('$trimmedQuery\uf8ff');
+
+    if (startAfterItemName != null && startAfterItemName.isNotEmpty) {
+      searchQuery = searchQuery.startAfter(startAfterItemName);
+    }
+
+    searchQuery = searchQuery.limitToFirst(limit);
+
+    final snapshot = await searchQuery.get();
+    return _mapSnapshotToAuctionList(snapshot);
+  }
+
+  List<AuctionItemModel> _mapSnapshotToAuctionList(DataSnapshot snapshot) => snapshot.children
+        .map((child) => _mapEntryToAuction(child.key, child.value))
+        .whereType<AuctionItemModel>()
+        .toList();
+
+  AuctionItemModel? _mapEntryToAuction(dynamic key, dynamic value) {
+    final data = _normalizeData(value);
+
+    if (data is! Map<String, dynamic>) return null;
+
+    if (data.isEmpty) return null;
+
+    final id = data['roomId'] as String?;
+    final itemName = data['itemName'] as String?;
+    final imageUrl = data['imageUrl'] as String?;
+    final hostUsername = data['hostUsername'] as String?;
+    final hostAvatar = data['hostAvatarUrl'] as String?;
+    final viewerCount = _parseViewerCount(data['viewerCount']);
+    final isLive = data['isLive'] as bool? ?? true;
+    final startedAt = _parseStartedAt(data['startedAt'] as num?);
+    final currentBid = _parseCurrentBid(data['currentBid']);
+    final hostId = data['hostId'] as int?;
+
+    return AuctionItemModel(
+      id: id,
+      itemName: itemName,
+      currentBid: currentBid,
+      imageUrl: imageUrl,
+      hostUsername: hostUsername,
+      hostAvatarUrl: hostAvatar,
+      viewerCount: viewerCount,
+      isLive: isLive,
+      startedAt: startedAt,
+      hostId: hostId,
+    );
+  }
+
+  dynamic _normalizeData(dynamic value) {
+    if (value is Map<dynamic, dynamic>) {
+      return value.map((key, val) => MapEntry(key.toString(), val));
+    }
+    return value;
+  }
+
+  int _parseViewerCount(dynamic raw) {
+    try {
+      if (raw is int) return raw;
+      if (raw is num) return raw.toInt();
+      return 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  double _parseCurrentBid(dynamic raw) {
+    if (raw is num) return raw.toDouble();
+    if (raw is Map<dynamic, dynamic>) {
+      final normalized = _normalizeData(raw);
+      final amount = normalized['amount'];
+      if (amount is num) return amount.toDouble();
+    }
+    return 0.0;
+  }
+
+  DateTime _parseStartedAt(dynamic raw) {
+    if (raw is num) {
+      return DateTime.fromMillisecondsSinceEpoch(raw.toInt());
+    }
+
+    if (raw is String) {
+      final parsed = DateTime.tryParse(raw);
+      if (parsed != null) return parsed;
+      final asNum = num.tryParse(raw);
+      if (asNum != null) {
+        return DateTime.fromMillisecondsSinceEpoch(asNum.toInt());
+      }
+    }
+
+    return DateTime.now();
   }
 }
 

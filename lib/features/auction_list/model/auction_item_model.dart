@@ -1,14 +1,14 @@
 class AuctionItemModel {
-  final String id;
-  final String itemName;
-  final double currentBid;
-  final String imageUrl;
-  final String hostUsername;
-  final String hostAvatarUrl;
-  final int viewerCount;
-  final bool isLive;
-  final String category;
-  final DateTime startedAt;
+  final String? id;
+  final String? itemName;
+  final double? currentBid;
+  final String? imageUrl;
+  final String? hostUsername;
+  final String? hostAvatarUrl;
+  final int? viewerCount;
+  final bool? isLive;
+  final DateTime? startedAt;
+  final int? hostId;
 
   AuctionItemModel({
     required this.id,
@@ -19,8 +19,8 @@ class AuctionItemModel {
     required this.hostAvatarUrl,
     required this.viewerCount,
     required this.isLive,
-    required this.category,
     required this.startedAt,
+    required this.hostId,
   });
 
   factory AuctionItemModel.fromJson(Map<String, dynamic> json) =>
@@ -33,8 +33,8 @@ class AuctionItemModel {
         hostAvatarUrl: json['hostAvatarUrl'] as String,
         viewerCount: json['viewerCount'] as int,
         isLive: json['isLive'] as bool,
-        category: json['category'] as String,
         startedAt: DateTime.parse(json['startedAt'] as String),
+        hostId: json['hostId'] as int?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -46,8 +46,8 @@ class AuctionItemModel {
         'hostAvatarUrl': hostAvatarUrl,
         'viewerCount': viewerCount,
         'isLive': isLive,
-        'category': category,
-        'startedAt': startedAt.toIso8601String(),
+        'startedAt': startedAt?.toIso8601String(),
+        'hostId': hostId,
       };
 
   AuctionItemModel copyWith({
@@ -59,8 +59,8 @@ class AuctionItemModel {
     String? hostAvatarUrl,
     int? viewerCount,
     bool? isLive,
-    String? category,
     DateTime? startedAt,
+    int? hostId,
   }) =>
       AuctionItemModel(
         id: id ?? this.id,
@@ -71,7 +71,7 @@ class AuctionItemModel {
         hostAvatarUrl: hostAvatarUrl ?? this.hostAvatarUrl,
         viewerCount: viewerCount ?? this.viewerCount,
         isLive: isLive ?? this.isLive,
-        category: category ?? this.category,
         startedAt: startedAt ?? this.startedAt,
+        hostId: hostId ?? this.hostId,
       );
 }
