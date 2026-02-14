@@ -28,6 +28,7 @@ class AuctionRoomState extends Equatable {
   final List<ChatMessageModel> messages;
   final List<SpeakRequestModel> speakRequests;
   final List<AudienceMemberModel> audienceMembers;
+  final List<BidHistoryEntry> bidHistory;
   final int viewerCount;
   final bool isLive;
   final bool isMicEnabled;
@@ -48,6 +49,7 @@ class AuctionRoomState extends Equatable {
       this.messages = const [],
       this.speakRequests = const [],
       this.audienceMembers = const [],
+      this.bidHistory = const [],
       this.viewerCount = 0,
       this.isLive = false,
       this.isMicEnabled = false,
@@ -68,6 +70,7 @@ class AuctionRoomState extends Equatable {
     List<ChatMessageModel>? messages,
     List<SpeakRequestModel>? speakRequests,
     List<AudienceMemberModel>? audienceMembers,
+    List<BidHistoryEntry>? bidHistory,
     int? viewerCount,
     bool? isLive,
     bool? isMicEnabled,
@@ -88,6 +91,7 @@ class AuctionRoomState extends Equatable {
         messages: messages ?? this.messages,
         speakRequests: speakRequests ?? this.speakRequests,
         audienceMembers: audienceMembers ?? this.audienceMembers,
+        bidHistory: bidHistory ?? this.bidHistory,
         viewerCount: viewerCount ?? this.viewerCount,
         isLive: isLive ?? this.isLive,
         isMicEnabled: isMicEnabled ?? this.isMicEnabled,
@@ -114,6 +118,7 @@ class AuctionRoomState extends Equatable {
         messages,
         speakRequests,
         audienceMembers,
+        bidHistory,
         viewerCount,
         isLive,
         isMicEnabled,
@@ -249,4 +254,46 @@ class AudienceMemberModel extends Equatable {
 
   @override
   List<Object?> get props => [userId, username, avatarUrl, joinedAt, role];
+}
+
+/// Bid history entry model for tracking individual bids in an auction
+class BidHistoryEntry extends Equatable {
+  final String bidId;
+  final String userId;
+  final String username;
+  final String? avatarUrl;
+  final double bidAmount;
+  final DateTime timestamp;
+
+  const BidHistoryEntry({
+    required this.bidId,
+    required this.userId,
+    required this.username,
+    this.avatarUrl,
+    required this.bidAmount,
+    required this.timestamp,
+  });
+
+  factory BidHistoryEntry.fromJson(Map<String, dynamic> json) =>
+      BidHistoryEntry(
+        bidId: json['bidId'] as String,
+        userId: json['userId'] as String,
+        username: json['username'] as String,
+        avatarUrl: json['avatarUrl'] as String?,
+        bidAmount: (json['bidAmount'] as num).toDouble(),
+        timestamp: DateTime.parse(json['timestamp'] as String),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'bidId': bidId,
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'bidAmount': bidAmount,
+        'timestamp': timestamp.toIso8601String(),
+      };
+
+  @override
+  List<Object?> get props =>
+      [bidId, userId, username, avatarUrl, bidAmount, timestamp];
 }

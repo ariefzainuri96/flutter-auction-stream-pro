@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,29 +61,56 @@ class _AuctionMenuSheetState extends ConsumerState<AuctionMenuSheet> {
   }
 
   List<_BidEntry> _buildBidHistory(AuctionRoomState data) {
-    final baseAmount = max(data.currentBid, 100);
-    final entries = <_BidEntry>[
+    final entries = <_BidEntry>[];
+
+    // Add current highest bid at the top (marked as winning)
+    entries.add(
       _BidEntry(
-        username: data.username ?? 'You',
+        username: data.highestBidderUserId != null
+            ? (data.bidHistory.isNotEmpty
+                ? data.bidHistory.first.username
+                : 'Unknown')
+            : (data.username ?? 'You'),
         amount: data.currentBid,
         timeAgo: 'Just now',
-        label: data.isHost ? 'Winning' : 'Winning',
+        label: 'Winning',
         isWinning: true,
       ),
-    ];
+    );
 
-    for (final template in _kBidTemplates) {
+    // Add historical bids (skip the first one since it's the current bid)
+    for (int i = 0; i < data.bidHistory.length && entries.length < 10; i++) {
+      final bid = data.bidHistory[i];
+
+      // Calculate time difference
+      final now = DateTime.now();
+      final difference = now.difference(bid.timestamp);
+      final timeAgo = _formatTimeDifference(difference);
+
       entries.add(
         _BidEntry(
-          username: template.username,
-          amount: max(baseAmount - template.offset, 50),
-          timeAgo: template.timeAgo,
-          label: template.label,
+          username: bid.username,
+          amount: bid.bidAmount,
+          timeAgo: timeAgo,
+          label: 'Outbid',
         ),
       );
     }
 
     return entries;
+  }
+
+  /// Format time difference to readable string
+  String _formatTimeDifference(Duration difference) {
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}s ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else {
+      return '${difference.inDays}d ago';
+    }
   }
 
   /// Map audience member role to display status
@@ -633,20 +659,6 @@ class _ParticipantData {
   });
 }
 
-class _BidTemplate {
-  final String username;
-  final String timeAgo;
-  final String label;
-  final double offset;
-
-  const _BidTemplate({
-    required this.username,
-    required this.timeAgo,
-    required this.label,
-    required this.offset,
-  });
-}
-
 class _BidEntry {
   final String username;
   final double amount;
@@ -662,18 +674,3 @@ class _BidEntry {
     this.isWinning = false,
   });
 }
-
-const _kBidTemplates = [
-  _BidTemplate(
-      username: 'David Kim', timeAgo: '2m ago', label: 'Outbid', offset: 250),
-  _BidTemplate(
-      username: 'Michael Ross',
-      timeAgo: '5m ago',
-      label: 'Outbid',
-      offset: 550),
-  _BidTemplate(
-      username: 'Elena Rodriguez',
-      timeAgo: '8m ago',
-      label: 'Outbid',
-      offset: 900),
-];

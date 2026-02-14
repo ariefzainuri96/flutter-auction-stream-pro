@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../../cores/config/flavor_config.dart';
 import '../../auction_list/model/auction_item_model.dart';
+import '../model/auction_room_state.dart';
 
 /// Firebase Realtime Database service for atomic bidding
 class AuctionFirebaseService {
@@ -12,10 +13,12 @@ class AuctionFirebaseService {
       'https://auction-stream-pro-default-rtdb.asia-southeast1.firebasedatabase.app/';
   DatabaseReference? _auctionRef;
   StreamSubscription? _bidSubscription;
+  StreamSubscription? _bidHistorySubscription;
 
   // Callbacks
   void Function(double newBid, String? bidderId, String? bidderAvatar)?
       onBidUpdated;
+  void Function(List<BidHistoryEntry> bidHistory)? onBidHistoryUpdated;
   void Function(String error)? onError;
 
   String get basePath =>
@@ -99,6 +102,7 @@ class AuctionFirebaseService {
   Future<BidResult> placeBid({
     required double bidAmount,
     required String userId,
+    required String username,
     String? userAvatar,
   }) async {
     if (_auctionRef == null) {
@@ -155,6 +159,15 @@ class AuctionFirebaseService {
         debugPrint(
           '[AuctionFirebaseService] Transaction committed successfully',
         );
+
+        // Add bid to history
+        await _addBidToHistory(
+          userId: userId,
+          username: username,
+          bidAmount: bidAmount,
+          avatarUrl: userAvatar,
+        );
+
         return BidResult(
           success: true,
           message: 'Bid placed successfully',
@@ -206,11 +219,166 @@ class AuctionFirebaseService {
     });
   }
 
+  /// Add bid to history
+  Future<void> _addBidToHistory({
+    required String userId,
+    required String username,
+    required double bidAmount,
+    String? avatarUrl,
+  }) async {
+    if (_auctionRef == null) {
+      debugPrint(
+          '[AuctionFirebaseService] Cannot add bid to history: not initialized');
+      return;
+    }
+
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final bidId = '${timestamp}_$userId';
+
+      await _auctionRef!.child('bidHistory/$bidId').set({
+        'bidId': bidId,
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'bidAmount': bidAmount,
+        'timestamp': ServerValue.timestamp,
+      });
+
+      debugPrint(
+        '[AuctionFirebaseService] Added bid to history: \$$bidAmount by $username',
+      );
+    } catch (e) {
+      debugPrint(
+        '[AuctionFirebaseService] Error adding bid to history: $e',
+      );
+    }
+  }
+
+  /// Start listening to bid history updates
+  Future<void> listenToBidHistory() async {
+    if (_auctionRef == null) {
+      debugPrint(
+          '[AuctionFirebaseService] Cannot listen to bid history: not initialized');
+      return;
+    }
+
+    debugPrint(
+      '[AuctionFirebaseService] Starting to listen for bid history updates...',
+    );
+
+    _bidHistorySubscription = _auctionRef!.child('bidHistory').onValue.listen(
+      (event) async {
+        try {
+          final List<BidHistoryEntry> bidHistory = [];
+
+          if (event.snapshot.exists) {
+            final data = event.snapshot.value as Map<dynamic, dynamic>;
+
+            for (final entry in data.entries) {
+              final bidData = entry.value as Map<dynamic, dynamic>;
+              try {
+                final timestamp = bidData['timestamp'] is int
+                    ? DateTime.fromMillisecondsSinceEpoch(
+                        bidData['timestamp'] as int)
+                    : DateTime.now();
+
+                final bid = BidHistoryEntry(
+                  bidId: bidData['bidId'] as String? ?? '',
+                  userId: bidData['userId'] as String? ?? '',
+                  username: bidData['username'] as String? ?? 'Unknown',
+                  avatarUrl: bidData['avatarUrl'] as String?,
+                  bidAmount: (bidData['bidAmount'] as num?)?.toDouble() ?? 0.0,
+                  timestamp: timestamp,
+                );
+
+                bidHistory.add(bid);
+              } catch (e) {
+                debugPrint(
+                    '[AuctionFirebaseService] Error parsing bid history entry: $e');
+              }
+            }
+
+            // Sort by timestamp descending (newest first)
+            bidHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+            // Keep only last 50 bids to prevent memory issues
+            if (bidHistory.length > 50) {
+              bidHistory.removeRange(50, bidHistory.length);
+            }
+
+            onBidHistoryUpdated?.call(bidHistory);
+
+            debugPrint(
+              '[AuctionFirebaseService] Bid history updated: ${bidHistory.length} bids',
+            );
+          }
+        } catch (e) {
+          debugPrint(
+            '[AuctionFirebaseService] Error listening to bid history: $e',
+          );
+        }
+      },
+      onError: (error) {
+        debugPrint(
+            '[AuctionFirebaseService] Error listening to bid history: $error');
+        onError?.call(error.toString());
+      },
+    );
+  }
+
+  /// Get bid history
+  Future<List<BidHistoryEntry>> getBidHistory() async {
+    if (_auctionRef == null) return [];
+
+    try {
+      final snapshot = await _auctionRef!.child('bidHistory').get();
+
+      if (!snapshot.exists) return [];
+
+      final List<BidHistoryEntry> bidHistory = [];
+      final data = snapshot.value as Map<dynamic, dynamic>;
+
+      for (final entry in data.entries) {
+        final bidData = entry.value as Map<dynamic, dynamic>;
+        try {
+          final timestamp = bidData['timestamp'] is int
+              ? DateTime.fromMillisecondsSinceEpoch(bidData['timestamp'] as int)
+              : DateTime.now();
+
+          final bid = BidHistoryEntry(
+            bidId: bidData['bidId'] as String? ?? '',
+            userId: bidData['userId'] as String? ?? '',
+            username: bidData['username'] as String? ?? 'Unknown',
+            avatarUrl: bidData['avatarUrl'] as String?,
+            bidAmount: (bidData['bidAmount'] as num?)?.toDouble() ?? 0.0,
+            timestamp: timestamp,
+          );
+
+          bidHistory.add(bid);
+        } catch (e) {
+          debugPrint(
+              '[AuctionFirebaseService] Error parsing bid history entry: $e');
+        }
+      }
+
+      // Sort by timestamp descending (newest first)
+      bidHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+      return bidHistory;
+    } catch (e) {
+      debugPrint('[AuctionFirebaseService] Error getting bid history: $e');
+      return [];
+    }
+  }
+
   /// Dispose and cleanup
   Future<void> dispose() async {
     debugPrint('[AuctionFirebaseService] Disposing...');
     await _bidSubscription?.cancel();
+    await _bidHistorySubscription?.cancel();
     _bidSubscription = null;
+    _bidHistorySubscription = null;
     _auctionRef = null;
   }
 

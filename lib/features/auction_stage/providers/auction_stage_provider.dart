@@ -137,6 +137,10 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       );
     };
 
+    _firebaseService.onBidHistoryUpdated = (bidHistory) {
+      state = state.copyWith(bidHistory: bidHistory);
+    };
+
     _firebaseService.onError = (error) {
       state = state.copyWith(errorMessage: error);
     };
@@ -202,6 +206,9 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
 
       // 8. Start listening to bids
       await _firebaseService.listenToBids();
+
+      // 8.5. Start listening to bid history
+      await _firebaseService.listenToBidHistory();
 
       // 9. Start listening to audience changes
       _setupAudienceListener();
@@ -291,6 +298,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     final result = await _firebaseService.placeBid(
       bidAmount: newBid,
       userId: state.uid.toString(),
+      username: state.username ?? 'Unknown',
       userAvatar: null, // TODO: Add user avatar
     );
 
