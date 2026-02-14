@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/constants/colors.dart';
 import '../model/auction_room_state.dart';
+import '../providers/auction_stage_provider.dart';
 
 /// Replicates the auction menu designs from the provided mockups.
-class AuctionMenuSheet extends StatefulWidget {
+class AuctionMenuSheet extends ConsumerStatefulWidget {
   final AuctionRoomState data;
   final Function() onEndOrLeavePressed;
 
@@ -16,31 +18,57 @@ class AuctionMenuSheet extends StatefulWidget {
   });
 
   @override
-  State<AuctionMenuSheet> createState() => _AuctionMenuSheetState();
+  ConsumerState<AuctionMenuSheet> createState() => _AuctionMenuSheetState();
 }
 
-class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
-  List<_ParticipantData> get _participants {
-    final seed = Uri.encodeComponent(widget.data.username ?? 'guest');
+class _AuctionMenuSheetState extends ConsumerState<AuctionMenuSheet> {
+  List<_ParticipantData> _buildParticipants(AuctionRoomState auctionData) {
+    final seed = Uri.encodeComponent(auctionData.username ?? 'guest');
     final you = _ParticipantData(
-      name: widget.data.username ?? 'You',
-      status: widget.data.isHost ? 'Host' : 'Active bidder',
+      name: auctionData.username ?? 'You',
+      status: auctionData.isHost ? 'Host' : 'Active bidder',
       avatarUrl: 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed',
       tag: '#001',
       isOnline: true,
       isBidder: true,
     );
-    return [you, ..._kSampleParticipants];
+
+    // Convert real audience members to _ParticipantData
+    // Filter out current user to avoid duplication
+    final otherParticipants = auctionData.audienceMembers
+        .where((member) => !_isCurrentUser(member.userId, auctionData))
+        .toList();
+
+    // Build participant list with current user first
+    final participants = <_ParticipantData>[you];
+
+    // Map audience members to ParticipantData, starting tag from #002
+    for (var i = 0; i < otherParticipants.length; i++) {
+      final member = otherParticipants[i];
+      participants.add(
+        _ParticipantData(
+          name: member.username,
+          status: _mapRoleToStatus(member.role),
+          avatarUrl:
+              member.avatarUrl ?? _generateFallbackAvatar(member.username),
+          tag: _generateTag(i + 2), // +2 because current user is #001
+          isOnline: true,
+          isBidder: member.role == 'speaker',
+        ),
+      );
+    }
+
+    return participants;
   }
 
-  List<_BidEntry> get _bidHistory {
-    final baseAmount = max(widget.data.currentBid, 100);
+  List<_BidEntry> _buildBidHistory(AuctionRoomState data) {
+    final baseAmount = max(data.currentBid, 100);
     final entries = <_BidEntry>[
       _BidEntry(
-        username: widget.data.username ?? 'You',
-        amount: widget.data.currentBid,
+        username: data.username ?? 'You',
+        amount: data.currentBid,
         timeAgo: 'Just now',
-        label: widget.data.isHost ? 'Winning' : 'Winning',
+        label: data.isHost ? 'Winning' : 'Winning',
         isWinning: true,
       ),
     ];
@@ -59,6 +87,36 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
     return entries;
   }
 
+  /// Map audience member role to display status
+  String _mapRoleToStatus(String role) {
+    switch (role) {
+      case 'speaker':
+        return 'Speaking';
+      case 'host':
+        return 'Host';
+      case 'viewer':
+      default:
+        return 'Watching';
+    }
+  }
+
+  /// Generate a tag like #001, #002, etc.
+  String _generateTag(int number) {
+    return '#${number.toString().padLeft(3, '0')}';
+  }
+
+  /// Generate fallback avatar URL using DiceBear
+  String _generateFallbackAvatar(String username) {
+    final seed = Uri.encodeComponent(username);
+    return 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed';
+  }
+
+  /// Check if a member is the current user
+  bool _isCurrentUser(String memberId, AuctionRoomState data) {
+    if (data.uid == null) return false;
+    return memberId == data.uid.toString();
+  }
+
   void _handleAction(BuildContext context) async {
     Navigator.of(context).pop();
     widget.onEndOrLeavePressed.call();
@@ -66,7 +124,13 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isHost = widget.data.isHost;
+    // Watch the auction stage provider for real-time updates
+    final auctionState = ref.watch(auctionStageProvider);
+
+    final isHost = auctionState.isHost;
+    final participants = _buildParticipants(auctionState);
+    final bidHistory = _buildBidHistory(auctionState);
+
     return Material(
       color: Colors.transparent,
       child: FractionallySizedBox(
@@ -118,7 +182,7 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
                                             .withOpacity(0.3)),
                                   ),
                                   child: Text(
-                                    '${_participants.length}',
+                                    '${participants.length}',
                                     style: const TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -146,8 +210,8 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
                         child: TabBarView(
                           physics: const BouncingScrollPhysics(),
                           children: [
-                            _buildParticipantsTab(),
-                            _buildBidsTab(),
+                            _buildParticipantsTab(participants),
+                            _buildBidsTab(bidHistory),
                           ],
                         ),
                       ),
@@ -211,8 +275,17 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
         ],
       );
 
-  Widget _buildParticipantsTab() {
-    final participants = _participants;
+  Widget _buildParticipantsTab(List<_ParticipantData> participants) {
+    // Show empty state if no participants
+    if (participants.isEmpty) {
+      return Center(
+        child: Text(
+          'No participants yet',
+          style: TextStyle(fontSize: 14, color: colors.mutedText),
+        ),
+      );
+    }
+
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: participants.length + 1,
@@ -221,7 +294,7 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
         if (index == participants.length) {
           return Center(
             child: Text(
-              'Showing ${participants.length} of 12 participants',
+              'Showing ${participants.length} participant${participants.length != 1 ? 's' : ''}',
               style: TextStyle(fontSize: 12, color: colors.mutedText),
             ),
           );
@@ -321,8 +394,7 @@ class _AuctionMenuSheetState extends State<AuctionMenuSheet> {
         ),
       );
 
-  Widget _buildBidsTab() {
-    final bids = _bidHistory;
+  Widget _buildBidsTab(List<_BidEntry> bids) {
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: bids.length + 1,
@@ -590,37 +662,6 @@ class _BidEntry {
     this.isWinning = false,
   });
 }
-
-const _kSampleParticipants = [
-  _ParticipantData(
-    name: 'Sarah Jenkins',
-    status: 'Active bidder',
-    avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBDnESuuJaDah1mDSbPuxLtyRq4XBlFxN00OBVvrvdVNAW-Kx8XBYKpoGWXoVhP6DSqIUqRVPc95rsg-sNbagjVe1i8jKNMnj0snke307TYGwXcjz8t4g6HVJyQ96GY_-ggpQU9WkloYvNGHqLq6nsalsipDLhAzFQIyZYDeep5NC0ut67bETGkll6tc2hBrlox2fA_G3Uuiq8IKep-CW06Lid0bTghSST8YosZHFXiQQ4MuHtPXB1VGR2RWdRfz0g4vg2DQ4WBWCT7',
-    tag: '#402',
-  ),
-  _ParticipantData(
-    name: 'Michael Ross',
-    status: 'Watching',
-    avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCJ0n3WjtwP3T84-QZQlEc580v_b4loqEWlL-id9AyKQ9pmJkusyuy38ydZKiuA17goqqELGPgXv2cVHHMEpFczBfITiHh6R9K204ETaj31btK5r5ngqyarY5vpWLBNwYMqHGbf15y-892LFTy0_AgKKmLnfU1EdBBYAVpNoNtLeOAZNCNoUAFSMiuFhQqnLbR_xihfUz14GsowEO6cnR55i6_NvWLm83WI6DiihOtzT1VVj9v9HZZus79vW330KXxd49aqB8aH0xVJ',
-    tag: '#119',
-  ),
-  _ParticipantData(
-    name: 'David Kim',
-    status: 'Active bidder',
-    avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAf6I_4ZY3KfOvsXFLmb7fm6FL3lBePXNxDenBeFb3LdptSUK2s17g8T6YGfUgpN4jpCFB7XYmJq-4pRj-aXxKkBGi-wzcyTzCm9iNR5i4EgNEe_dW-h7WQCXHifGEsxYCoeLJRtHneXDL3ikjri1We_jL3neJOYSl3_ax1qfxAq72LVb7mr4yQ13pDVElj6odkyo3wmJ5l6bUnAm286RV-Spi5cAUYYYs5gZz63JzK6D0iHXmm2Vo5MKZPRpOzkZUyWH6_rQoUrtSC',
-    tag: '#088',
-  ),
-  _ParticipantData(
-    name: 'Elena Rodriguez',
-    status: 'Watching',
-    avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuB_FdC5M_SeWKzw-LKsBhQXMoyIbLf6LpW4rvZleQ2_MdXGruRIw6nzTo7wgDy9cW__jXcalRF-y94PxFOZInHaZg8ptIRmz-EdHDpXcpwNul1Ox1f20Qm9bUQ7IL_DW8RYQzCIAgBbpmsQYJEIHVW7PrJT8jFf5GN5XOmatBIa1G7vGyaTYUL9nQCJdQxkIqxY1spEVnu9HNs1nA8iObJ-pzEH914acpXoi62V6Q3p24XfEej88nmXe056wJRgPmZk64BrqS-oSARt',
-    tag: '#512',
-  ),
-];
 
 const _kBidTemplates = [
   _BidTemplate(

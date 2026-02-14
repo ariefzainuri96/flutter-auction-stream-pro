@@ -27,6 +27,8 @@ class AuctionRoomState extends Equatable {
   final String? highestBidderAvatar;
   final List<ChatMessageModel> messages;
   final List<SpeakRequestModel> speakRequests;
+  final List<AudienceMemberModel> audienceMembers;
+  final int viewerCount;
   final bool isLive;
   final bool isMicEnabled;
   final bool isCameraEnabled;
@@ -35,24 +37,25 @@ class AuctionRoomState extends Equatable {
   final int? uid;
   final String? auctionImageUrl;
 
-  const AuctionRoomState({
-    required this.roomId,
-    this.username,
-    this.userRole = UserRole.audience,
-    this.connectionState = AuctionConnectionState.disconnected,
-    this.currentBid = 0,
-    this.highestBidderUserId,
-    this.highestBidderAvatar,
-    this.messages = const [],
-    this.speakRequests = const [],
-    this.isLive = false,
-    this.isMicEnabled = false,
-    this.isCameraEnabled = false,
-    this.errorMessage,
-    this.hostId,
-    this.uid,
-    this.auctionImageUrl
-  });
+  const AuctionRoomState(
+      {required this.roomId,
+      this.username,
+      this.userRole = UserRole.audience,
+      this.connectionState = AuctionConnectionState.disconnected,
+      this.currentBid = 0,
+      this.highestBidderUserId,
+      this.highestBidderAvatar,
+      this.messages = const [],
+      this.speakRequests = const [],
+      this.audienceMembers = const [],
+      this.viewerCount = 0,
+      this.isLive = false,
+      this.isMicEnabled = false,
+      this.isCameraEnabled = false,
+      this.errorMessage,
+      this.hostId,
+      this.uid,
+      this.auctionImageUrl});
 
   AuctionRoomState copyWith({
     String? roomId,
@@ -64,6 +67,8 @@ class AuctionRoomState extends Equatable {
     String? highestBidderAvatar,
     List<ChatMessageModel>? messages,
     List<SpeakRequestModel>? speakRequests,
+    List<AudienceMemberModel>? audienceMembers,
+    int? viewerCount,
     bool? isLive,
     bool? isMicEnabled,
     bool? isCameraEnabled,
@@ -82,6 +87,8 @@ class AuctionRoomState extends Equatable {
         highestBidderAvatar: highestBidderAvatar ?? this.highestBidderAvatar,
         messages: messages ?? this.messages,
         speakRequests: speakRequests ?? this.speakRequests,
+        audienceMembers: audienceMembers ?? this.audienceMembers,
+        viewerCount: viewerCount ?? this.viewerCount,
         isLive: isLive ?? this.isLive,
         isMicEnabled: isMicEnabled ?? this.isMicEnabled,
         isCameraEnabled: isCameraEnabled ?? this.isCameraEnabled,
@@ -106,6 +113,8 @@ class AuctionRoomState extends Equatable {
         highestBidderAvatar,
         messages,
         speakRequests,
+        audienceMembers,
+        viewerCount,
         isLive,
         isMicEnabled,
         isCameraEnabled,
@@ -203,4 +212,41 @@ class SpeakRequestModel extends Equatable {
 
   @override
   List<Object?> get props => [userId, username, avatarUrl, timestamp];
+}
+
+/// Audience member model for tracking participants in an auction
+class AudienceMemberModel extends Equatable {
+  final String userId;
+  final String username;
+  final String? avatarUrl;
+  final DateTime joinedAt;
+  final String role; // "viewer" or "speaker"
+
+  const AudienceMemberModel({
+    required this.userId,
+    required this.username,
+    this.avatarUrl,
+    required this.joinedAt,
+    this.role = "viewer",
+  });
+
+  factory AudienceMemberModel.fromJson(Map<String, dynamic> json) =>
+      AudienceMemberModel(
+        userId: json['userId'] as String,
+        username: json['username'] as String,
+        avatarUrl: json['avatarUrl'] as String?,
+        joinedAt: DateTime.parse(json['joinedAt'] as String),
+        role: json['role'] as String? ?? 'viewer',
+      );
+
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'joinedAt': joinedAt.toIso8601String(),
+        'role': role,
+      };
+
+  @override
+  List<Object?> get props => [userId, username, avatarUrl, joinedAt, role];
 }

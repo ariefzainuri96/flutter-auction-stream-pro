@@ -64,43 +64,11 @@ class AuctionCard extends StatelessWidget {
                       ),
                     ),
 
-                    // LIVE badge
+                    // Status badge (LIVE or ENDED)
                     Positioned(
                       left: 12,
                       top: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.red500.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'LIVE • ${_formatViewerCount(auction.viewerCount ?? 0)}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: _buildStatusBadge(),
                     ),
                   ],
                 ),
@@ -186,6 +154,52 @@ class AuctionCard extends StatelessWidget {
           ],
         ),
       );
+
+  /// Build dynamic status badge based on auction live status
+  Widget _buildStatusBadge() {
+    final isLive = auction.isLive ?? true;
+    final badgeColor = isLive ? colors.red500 : colors.slate400;
+    final badgeText = isLive
+        ? 'LIVE • ${_formatViewerCount(auction.viewerCount ?? 0)}'
+        : 'ENDED';
+    final textColor = isLive ? Colors.white : colors.slate200;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: badgeColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Animated pulse dot - only show for live auctions
+          if (isLive)
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          if (isLive) const SizedBox(width: 6),
+          Text(
+            badgeText,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   String _formatViewerCount(int count) {
     if (count >= 1000) {

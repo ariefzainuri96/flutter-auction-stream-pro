@@ -270,17 +270,20 @@ class AuctionListView extends StatelessWidget {
           }
 
           final auction = data.auctions[index];
-          return AuctionCard(
-            auction: auction,
-            onTap: () {
-              NavigationService.pushNamed(
-                Routes.lobby,
-                args: LobbyViewData(
-                  hostId: auction.hostId ?? 0,
-                  roomId: auction.id ?? '',
-                ),
-              );
-            },
+          return Opacity(
+            opacity: (auction.isLive ?? true) ? 1.0 : 0.65,
+            child: AuctionCard(
+              auction: auction,
+              onTap: () {
+                NavigationService.pushNamed(
+                  Routes.lobby,
+                  args: LobbyViewData(
+                    hostId: auction.hostId ?? 0,
+                    roomId: auction.id ?? '',
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -213,6 +214,131 @@ class AuctionFirebaseService {
     _auctionRef = null;
   }
 
+  /// Add audience member to the auction
+  Future<void> addAudienceMember({
+    required String userId,
+    required String username,
+    String? avatarUrl,
+    String role = 'viewer',
+  }) async {
+    if (_auctionRef == null) {
+      debugPrint(
+          '[AuctionFirebaseService] Cannot add audience: not initialized');
+      return;
+    }
+
+    try {
+      final timestamp = ServerValue.timestamp;
+
+      await _auctionRef!.child('audience/$userId').set({
+        'userId': userId,
+        'username': username,
+        'avatarUrl': avatarUrl,
+        'joinedAt': timestamp,
+        'role': role,
+      });
+
+      debugPrint(
+        '[AuctionFirebaseService] Added audience member: $username ($userId)',
+      );
+
+      // Increment viewer count atomically
+      await _incrementViewerCount();
+    } catch (e) {
+      debugPrint(
+        '[AuctionFirebaseService] Error adding audience member: $e',
+      );
+    }
+  }
+
+  /// Remove audience member from the auction
+  Future<void> removeAudienceMember(String userId) async {
+    if (_auctionRef == null) {
+      debugPrint(
+          '[AuctionFirebaseService] Cannot remove audience: not initialized');
+      return;
+    }
+
+    try {
+      await _auctionRef!.child('audience/$userId').remove();
+
+      debugPrint(
+        '[AuctionFirebaseService] Removed audience member: $userId',
+      );
+
+      // Decrement viewer count atomically
+      await _decrementViewerCount();
+    } catch (e) {
+      debugPrint(
+        '[AuctionFirebaseService] Error removing audience member: $e',
+      );
+    }
+  }
+
+  /// Get all audience members
+  Future<List<Map<String, dynamic>>> getAudienceMembers() async {
+    if (_auctionRef == null) return [];
+
+    try {
+      final snapshot = await _auctionRef!.child('audience').get();
+
+      if (!snapshot.exists) return [];
+
+      final List<Map<String, dynamic>> members = [];
+      for (final child in snapshot.children) {
+        if (child.value is Map<dynamic, dynamic>) {
+          final data = _normalizeData(child.value);
+          members.add(data as Map<String, dynamic>);
+        }
+      }
+
+      return members;
+    } catch (e) {
+      debugPrint('[AuctionFirebaseService] Error getting audience members: $e');
+      return [];
+    }
+  }
+
+  /// Increment viewer count atomically
+  Future<void> _incrementViewerCount() async {
+    if (_auctionRef == null) return;
+
+    try {
+      await _auctionRef!.child('viewerCount').runTransaction((Object? current) {
+        int count = 0;
+        if (current is int) {
+          count = current;
+        } else if (current is num) {
+          count = current.toInt();
+        }
+        return Transaction.success(count + 1);
+      });
+    } catch (e) {
+      debugPrint(
+          '[AuctionFirebaseService] Error incrementing viewer count: $e');
+    }
+  }
+
+  /// Decrement viewer count atomically
+  Future<void> _decrementViewerCount() async {
+    if (_auctionRef == null) return;
+
+    try {
+      await _auctionRef!.child('viewerCount').runTransaction((Object? current) {
+        int count = 0;
+        if (current is int) {
+          count = current;
+        } else if (current is num) {
+          count = current.toInt();
+        }
+        return Transaction.success(max(0, count - 1));
+      });
+    } catch (e) {
+      debugPrint(
+          '[AuctionFirebaseService] Error decrementing viewer count: $e');
+    }
+  }
+
   DatabaseReference get _auctionsRootRef {
     final firebaseApp = Firebase.app();
     return FirebaseDatabase.instanceFor(
@@ -221,12 +347,13 @@ class AuctionFirebaseService {
     ).ref('$basePath/auctions');
   }
 
+  DatabaseReference? get audienceReference => _auctionRef?.child('audience');
+
   /// Fetch auctions in pages of [limit], optionally starting after [startAfter]
   Future<List<AuctionItemModel>> fetchAuctions({
     int limit = 10,
     DateTime? startAfter,
   }) async {
-    debugPrint('TAG_ARIEF => fetchAuctions');
     Query query = _auctionsRootRef.orderByChild('startedAt');
 
     if (startAfter != null) {
@@ -262,10 +389,11 @@ class AuctionFirebaseService {
     return _mapSnapshotToAuctionList(snapshot);
   }
 
-  List<AuctionItemModel> _mapSnapshotToAuctionList(DataSnapshot snapshot) => snapshot.children
-        .map((child) => _mapEntryToAuction(child.key, child.value))
-        .whereType<AuctionItemModel>()
-        .toList();
+  List<AuctionItemModel> _mapSnapshotToAuctionList(DataSnapshot snapshot) =>
+      snapshot.children
+          .map((child) => _mapEntryToAuction(child.key, child.value))
+          .whereType<AuctionItemModel>()
+          .toList();
 
   AuctionItemModel? _mapEntryToAuction(dynamic key, dynamic value) {
     final data = _normalizeData(value);

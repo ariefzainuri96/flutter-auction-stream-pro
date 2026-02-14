@@ -188,14 +188,25 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
           itemName: itemName,
           hostId: state.hostId ?? 0,
           auctionImageUrl: state.auctionImageUrl ?? '',
-          username: state.username ?? ''
+          username: state.username ?? '',
         );
       }
 
-      // 7. Start listening to bids
+      // 7. Add current user to audience
+      await _firebaseService.addAudienceMember(
+        userId: state.uid.toString(),
+        username: state.username ?? 'Unknown',
+        avatarUrl: null, // TODO: Add user avatar
+        role: isHost ? 'speaker' : 'viewer',
+      );
+
+      // 8. Start listening to bids
       await _firebaseService.listenToBids();
 
-      // 8. Add welcome message
+      // 9. Start listening to audience changes
+      _setupAudienceListener();
+
+      // 10. Add welcome message
       _addSystemMessage(
           'Welcome to the auction! Starting bid: \$${startingBid ?? 0}');
 
@@ -213,6 +224,50 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
         errorMessage: 'Failed to connect: $e',
       );
     }
+  }
+
+  /// Setup listener for audience changes
+  void _setupAudienceListener() {
+    _firebaseService.audienceReference?.onValue.listen(
+      (event) async {
+        final members = await _firebaseService.getAudienceMembers();
+
+        final audienceMembers = members
+            .map((data) {
+              try {
+                return AudienceMemberModel(
+                  userId: data['userId'] as String? ?? '',
+                  username: data['username'] as String? ?? 'Unknown',
+                  avatarUrl: data['avatarUrl'] as String?,
+                  joinedAt: data['joinedAt'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                          data['joinedAt'] as int)
+                      : DateTime.now(),
+                  role: data['role'] as String? ?? 'viewer',
+                );
+              } catch (e) {
+                debugPrint(
+                    '[AuctionStageNotifier] Error parsing audience member: $e');
+                return null;
+              }
+            })
+            .whereType<AudienceMemberModel>()
+            .toList();
+
+        state = state.copyWith(
+          audienceMembers: audienceMembers,
+          viewerCount: audienceMembers.length,
+        );
+
+        debugPrint(
+          '[AuctionStageNotifier] Audience updated: ${audienceMembers.length} members',
+        );
+      },
+      onError: (error) {
+        debugPrint(
+            '[AuctionStageNotifier] Error listening to audience: $error');
+      },
+    );
   }
 
   /// Place a bid (atomic operation via Firebase Transaction)
@@ -369,6 +424,9 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
   /// Leave auction
   Future<void> leaveAuction() async {
     debugPrint('[AuctionStageNotifier] Leaving auction...');
+
+    // Remove current user from audience
+    await _firebaseService.removeAudienceMember(state.uid.toString());
 
     if (state.isHost) {
       await _firebaseService.endAuction();
