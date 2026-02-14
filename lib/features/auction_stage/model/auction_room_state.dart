@@ -33,6 +33,7 @@ class AuctionRoomState extends Equatable {
   final String? errorMessage;
   final int? hostId;
   final int? uid;
+  final String? auctionImageUrl;
 
   const AuctionRoomState({
     required this.roomId,
@@ -50,6 +51,7 @@ class AuctionRoomState extends Equatable {
     this.errorMessage,
     this.hostId,
     this.uid,
+    this.auctionImageUrl
   });
 
   AuctionRoomState copyWith({
@@ -68,6 +70,7 @@ class AuctionRoomState extends Equatable {
     String? errorMessage,
     int? hostId,
     int? uid,
+    String? auctionImageUrl,
   }) =>
       AuctionRoomState(
         username: username ?? this.username,
@@ -85,6 +88,7 @@ class AuctionRoomState extends Equatable {
         errorMessage: errorMessage ?? this.errorMessage,
         hostId: hostId ?? this.hostId,
         uid: uid ?? this.uid,
+        auctionImageUrl: auctionImageUrl ?? this.auctionImageUrl,
       );
 
   bool get isHost => userRole == UserRole.host;
@@ -108,6 +112,7 @@ class AuctionRoomState extends Equatable {
         errorMessage,
         hostId,
         uid,
+        auctionImageUrl,
       ];
 }
 

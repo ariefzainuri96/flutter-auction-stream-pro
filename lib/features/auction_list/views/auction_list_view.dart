@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../../cores/base/base_provider_view.dart';
 import '../../../cores/constants/colors.dart';
@@ -20,47 +21,92 @@ class AuctionListView extends StatelessWidget {
       BaseProviderView<AuctionListNotifier, AuctionListNotifierData>(
         provider: auctionListProvider,
         backgroundColor: colors.backgroundDark,
-        builder: (context, data, vm) => Column(
+        builder: (context, data, vm) => Stack(
           children: [
-            // Header
-            _buildHeader(context),
+            Column(
+              children: [
+                // Header
+                _buildHeader(context),
 
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: SharedInputField(
-                placeholder: 'Find items...',
-                controller: vm.searchController,
-                prefixIcon: Icons.search,
-                onChanged: vm.updateSearch,
-                suffixIcon: data.searchQuery.isNotEmpty ? Icons.clear : null,
-                onSuffixTap: data.searchQuery.isNotEmpty
-                    ? () {
-                        vm.clearSearch();
-                      }
-                    : null,
-              ),
+                // Search Bar
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: SharedInputField(
+                    placeholder: 'Find items...',
+                    controller: vm.searchController,
+                    prefixIcon: Icons.search,
+                    onChanged: vm.updateSearch,
+                    suffixIcon:
+                        data.searchQuery.isNotEmpty ? Icons.clear : null,
+                    onSuffixTap: data.searchQuery.isNotEmpty
+                        ? () {
+                            vm.clearSearch();
+                          }
+                        : null,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Divider
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        colors.surfaceBorder,
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Content
+                Expanded(
+                  child: _buildContent(context, data, vm),
+                ),
+              ],
             ),
 
-            const SizedBox(height: 16),
-
-            // Divider
-            Container(
-              height: 1,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    colors.surfaceBorder,
-                    Colors.transparent,
-                  ],
+            // FAB button
+            Positioned(
+              right: 24,
+              bottom: 24,
+              child: FloatingActionButton(
+                onPressed: () {
+                  NavigationService.pushNamed(Routes.createAuction);
+                },
+                backgroundColor: colors.primary,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colors.primary,
+                        const Color(0xFF7C3AED),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.primary.withOpacity(0.4),
+                        blurRadius: 30,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.videocam,
+                      size: 28,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
-            ),
-
-            // Content
-            Expanded(
-              child: _buildContent(context, data, vm),
             ),
           ],
         ),
@@ -169,13 +215,26 @@ class AuctionListView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Try adjusting your filters',
-              style: TextStyle(
-                fontSize: 14,
-                color: colors.slate400,
-              ),
-            ),
+            RichText(
+              text: TextSpan(
+                  text: 'Try adjusting your filters, or ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: colors.slate400,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Retry?',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colors.primary,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()..onTap = vm.refresh,
+                    )
+                  ]),
+            )
           ],
         ),
       );
@@ -186,91 +245,44 @@ class AuctionListView extends StatelessWidget {
       onRefresh: vm.refresh,
       color: colors.primary,
       backgroundColor: colors.surfaceDark,
-      child: Stack(
-        children: [
-          GridView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: vm.scrollController,
-            padding: const EdgeInsets.all(20),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              // childAspectRatio: 0.575,
-              mainAxisExtent: cardHeight,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 24,
-            ),
-            itemCount:
-                data.auctions.length + (data.isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index == data.auctions.length) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
-                    ),
-                  ),
-                );
-              }
-
-              final auction = data.auctions[index];
-              return AuctionCard(
-                auction: auction,
-                onTap: () {
-                  final hostId = int.tryParse(
-                        'host'.hashCode.toString().substring(0, 8),
-                      ) ??
-                      0;
-                  const roomId = 'test-room1';
-
-                  NavigationService.pushNamed(
-                    Routes.lobby,
-                    args: LobbyViewData(hostId: hostId, roomId: roomId),
-                  );
-                },
-              );
-            },
-          ),
-
-          // FAB button
-          Positioned(
-            right: 24,
-            bottom: 24,
-            child: FloatingActionButton(
-              onPressed: () {
-                NavigationService.pushNamed(Routes.createAuction);
-              },
-              backgroundColor: colors.primary,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colors.primary,
-                      const Color(0xFF7C3AED),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.primary.withOpacity(0.4),
-                      blurRadius: 30,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.videocam,
-                    size: 28,
-                    color: Colors.white,
-                  ),
+      child: GridView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        controller: vm.scrollController,
+        padding: const EdgeInsets.all(20),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          // childAspectRatio: 0.575,
+          mainAxisExtent: cardHeight,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 24,
+        ),
+        itemCount: data.auctions.length + (data.isLoadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == data.auctions.length) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
                 ),
               ),
-            ),
-          ),
-        ],
+            );
+          }
+
+          final auction = data.auctions[index];
+          return AuctionCard(
+            auction: auction,
+            onTap: () {
+              NavigationService.pushNamed(
+                Routes.lobby,
+                args: LobbyViewData(
+                  hostId: auction.hostId ?? 0,
+                  roomId: auction.id ?? '',
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

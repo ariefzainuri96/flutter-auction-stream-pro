@@ -27,6 +27,7 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
     return LobbyNotifierData(
       request: LobbyRequestModel(),
       lobbyState: PageState.initial,
+      hostId: 0,
     );
   }
 
@@ -35,7 +36,7 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
   }
 
   /// Enter the auction room
-  Future<void> enterRoom(int hostId) async {
+  Future<void> enterRoom() async {
     // Validate inputs
     if (!state.request.isValid) {
       debugPrint('Invalid lobby data: username and roomId are required');
@@ -43,17 +44,11 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
       return;
     }
 
-    state = state.copyWith(lobbyState: PageState.loading);
-
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    state = state.copyWith(lobbyState: PageState.success);
-
     final data = AuctionStageViewData(
       roomId: state.request.roomId ?? '',
       uid: Random().nextInt(1 << 31),
       username: state.request.username ?? '',
-      hostId: hostId,
+      hostId: state.hostId,
     );
 
     NavigationService.pushNamed(Routes.auctionStage, args: data);
@@ -61,24 +56,33 @@ class LobbyNotifier extends Notifier<LobbyNotifierData> {
 
   void initializeWithParams({required LobbyViewData args}) {
     roomIdController.text = args.roomId;
+
+    state = state.copyWith(
+      request: state.request.copyWith(roomId: args.roomId),
+      hostId: args.hostId,
+    );
   }
 }
 
 class LobbyNotifierData {
   LobbyRequestModel request;
   PageState lobbyState;
+  int hostId;
 
   LobbyNotifierData({
     required this.request,
     required this.lobbyState,
+    required this.hostId,
   });
 
   LobbyNotifierData copyWith({
     LobbyRequestModel? request,
     PageState? lobbyState,
+    int? hostId,
   }) =>
       LobbyNotifierData(
         request: request ?? this.request,
         lobbyState: lobbyState ?? this.lobbyState,
+        hostId: hostId ?? this.hostId,
       );
 }

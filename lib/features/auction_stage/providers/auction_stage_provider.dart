@@ -2,6 +2,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../cores/utils/firebase_helper.dart';
+import '../../../cores/utils/navigation_service.dart';
 import '../model/auction_room_state.dart';
 import '../services/agora_rtc_service.dart';
 import '../services/agora_rtm_service.dart';
@@ -54,6 +55,7 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     required String username,
     required bool isHost,
     required int hostId,
+    required String auctionImageUrl,
     double? startingBid,
     String? itemName,
   }) {
@@ -62,6 +64,8 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
       uid: uid,
       userRole: isHost ? UserRole.host : UserRole.audience,
       hostId: hostId,
+      auctionImageUrl: auctionImageUrl,
+      username: username,
     );
 
     // Start connection
@@ -183,6 +187,8 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
           startingBid: startingBid,
           itemName: itemName,
           hostId: state.hostId ?? 0,
+          auctionImageUrl: state.auctionImageUrl ?? '',
+          username: state.username ?? ''
         );
       }
 
@@ -369,6 +375,8 @@ class AuctionStageNotifier extends Notifier<AuctionRoomState> {
     }
 
     await _dispose();
+
+    NavigationService.pop();
   }
 
   /// Dispose all services

@@ -2,15 +2,15 @@ class CreateAuctionRequestModel {
   String? itemName;
   String? username;
   double? startingBid;
-  String? auctionTitle;
   String? photoPath;
+  String? photoUrl;
 
   CreateAuctionRequestModel({
     this.itemName,
     this.startingBid,
     this.username,
-    this.auctionTitle,
     this.photoPath,
+    this.photoUrl,
   });
 
   /// Validate that all mandatory fields are filled
@@ -21,8 +21,6 @@ class CreateAuctionRequestModel {
       username!.trim().isNotEmpty &&
       startingBid != null &&
       startingBid! >= 0 &&
-      auctionTitle != null &&
-      auctionTitle!.trim().isNotEmpty &&
       photoPath != null &&
       photoPath!.trim().isNotEmpty;
 
@@ -51,13 +49,6 @@ class CreateAuctionRequestModel {
     return null;
   }
 
-  String? get auctionTitleError {
-    if (auctionTitle == null || auctionTitle!.trim().isEmpty) {
-      return 'Auction title is required';
-    }
-    return null;
-  }
-
   String? get photoError {
     if (photoPath == null || photoPath!.trim().isEmpty) {
       return 'Item photo is required';
@@ -69,14 +60,14 @@ class CreateAuctionRequestModel {
     String? itemName,
     String? username,
     double? startingBid,
-    String? auctionTitle,
     String? photoPath,
+    String? photoUrl,
   }) =>
       CreateAuctionRequestModel(
         itemName: itemName ?? this.itemName,
         username: username ?? this.username,
         startingBid: startingBid ?? this.startingBid,
-        auctionTitle: auctionTitle ?? this.auctionTitle,
         photoPath: photoPath ?? this.photoPath,
+        photoUrl: photoUrl ?? this.photoUrl,
       );
 }

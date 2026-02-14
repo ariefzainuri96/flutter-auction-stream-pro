@@ -22,12 +22,14 @@ class AuctionStageViewData {
   final double? startingBid;
   final String? itemName;
   final int hostId;
+  final String? auctionImageUrl;
 
   AuctionStageViewData({
     required this.roomId,
     required this.uid,
     required this.username,
     required this.hostId,
+    this.auctionImageUrl,
     this.isHost = false,
     this.startingBid,
     this.itemName,
@@ -73,6 +75,7 @@ class AuctionStageView extends ConsumerWidget {
                 startingBid: args.startingBid,
                 itemName: args.itemName,
                 hostId: args.hostId,
+                auctionImageUrl: args.auctionImageUrl ?? '',
               );
             }
           });
@@ -147,6 +150,9 @@ class AuctionStageView extends ConsumerWidget {
       );
     }
 
+    debugPrint(
+        '🎥 Rendering video view for user ${args.hostId} - ${args.roomId}');
+
     // Render video view
     return SizedBox(
       width: double.infinity,
@@ -161,8 +167,8 @@ class AuctionStageView extends ConsumerWidget {
           : AgoraVideoView(
               controller: VideoViewController.remote(
                 rtcEngine: engine,
-                canvas: VideoCanvas(uid: data.hostId),
-                connection: RtcConnection(channelId: data.roomId),
+                canvas: VideoCanvas(uid: args.hostId),
+                connection: RtcConnection(channelId: args.roomId),
               ),
             ),
     );
@@ -593,7 +599,7 @@ class AuctionStageView extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => NavigationService.popXTimes(2),
+            onPressed: () => NavigationService.pop(callback: true),
             child: Text(
               'Leave',
               style: TextStyle(color: colors.red500),

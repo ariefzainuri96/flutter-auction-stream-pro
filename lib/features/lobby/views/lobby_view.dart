@@ -56,11 +56,6 @@ class LobbyView extends StatelessWidget {
                           SharedGlassPanel(
                             child: Column(
                               children: [
-                                // Avatar preview
-                                _buildAvatarPreview(),
-
-                                const SizedBox(height: 24),
-
                                 // Username input
                                 SharedInputField(
                                   label: 'Username',
@@ -103,7 +98,7 @@ class LobbyView extends StatelessWidget {
                           SharedPrimaryButton(
                             text: 'Enter Room',
                             trailingIcon: Icons.login_outlined,
-                            onPressed: () => vm.enterRoom(0),
+                            onPressed: () => vm.enterRoom(),
                             isLoading: data.lobbyState == PageState.loading,
                           ),
 
@@ -165,55 +160,6 @@ class LobbyView extends StatelessWidget {
             ),
           ],
         ),
-      );
-
-  Widget _buildAvatarPreview() => Stack(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: colors.surfaceDark,
-              border: Border.all(
-                color: colors.surfaceBorder,
-                width: 2,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.person_outline,
-              color: colors.slate500,
-              size: 36,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: colors.primary,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: colors.backgroundDark,
-                  width: 2,
-                ),
-              ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 14,
-              ),
-            ),
-          ),
-        ],
       );
 
   Widget _buildPoweredBy() => Text(

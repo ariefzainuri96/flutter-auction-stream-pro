@@ -1,8 +1,14 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+
 import '../../../cores/constants/enums/page_state.dart';
 import '../../../cores/routers/router_constant.dart';
 import '../../../cores/utils/navigation_service.dart';
@@ -127,9 +133,6 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
       if (state.request.startingBidError != null) {
         errors.add(state.request.startingBidError!);
       }
-      if (state.request.auctionTitleError != null) {
-        errors.add(state.request.auctionTitleError!);
-      }
       if (state.request.usernameError != null) {
         errors.add(state.request.usernameError!);
       }
@@ -150,24 +153,99 @@ class CreateAuctionNotifier extends Notifier<CreateAuctionNotifierData> {
 
     await Future.delayed(const Duration(milliseconds: 700));
 
-    state = state.copyWith(createState: PageState.success);
-
     final uid = Random().nextInt(1 << 31);
     debugPrint('Generated random UID: $uid');
-    final roomId = Random().nextInt(1 << 31);
+    final roomId = Random().nextInt(1 << 31).toString();
+
+    final uploadUrl = await _uploadItemImage(state.request.photoPath, roomId);
+
+    if (uploadUrl == null) {
+      const errorMessage = 'Unable to upload item photo, please try again.';
+      debugPrint('Photo upload failed for room $roomId');
+      state = state.copyWith(
+        createState: PageState.error,
+        errorMessage: errorMessage,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      createState: PageState.success,
+      request: state.request.copyWith(photoUrl: uploadUrl),
+    );
 
     final data = AuctionStageViewData(
-      // roomId: roomId.toString(),
-      roomId: 'test-room1',
+      roomId: roomId,
       uid: uid,
       username: state.request.username ?? '',
       isHost: true,
       startingBid: state.request.startingBid,
       itemName: state.request.itemName,
       hostId: uid,
+      auctionImageUrl: uploadUrl,
     );
 
     NavigationService.pushNamed(Routes.auctionStage, args: data);
+  }
+
+  Future<String?> _uploadItemImage(String? sourcePath, String roomId) async {
+    if (sourcePath == null || sourcePath.isEmpty) {
+      return null;
+    }
+
+    try {
+      final compressedFile = await _compressImage(sourcePath);
+      if (compressedFile == null) {
+        return null;
+      }
+
+      final storagePath = 'auction_items/$roomId/${path.basename(compressedFile.path)}';
+      final reference = FirebaseStorage.instance.ref().child(storagePath);
+      final uploadTask = reference.putFile(File(compressedFile.path));
+      final snapshot = await uploadTask.whenComplete(() {});
+      return await snapshot.ref.getDownloadURL();
+    } on FirebaseException catch (e) {
+      debugPrint('Firebase storage upload error: ${e.code} ${e.message}');
+    } catch (e) {
+      debugPrint('Unexpected error uploading image: $e');
+    }
+    return null;
+  }
+
+  Future<XFile?> _compressImage(String sourcePath) async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final baseName = path.basenameWithoutExtension(sourcePath);
+      final extension = path.extension(sourcePath).isNotEmpty
+          ? path.extension(sourcePath)
+          : '.jpg';
+
+      for (var quality = 85; quality >= 30; quality -= 10) {
+        final targetPath = path.join(
+          tempDir.path,
+          '$baseName-$quality-${DateTime.now().millisecondsSinceEpoch}$extension',
+        );
+        final compressedFile = await FlutterImageCompress.compressAndGetFile(
+          sourcePath,
+          targetPath,
+          minWidth: 720,
+          minHeight: 720,
+          quality: quality,
+          keepExif: false,
+        );
+
+        if (compressedFile == null) {
+          continue;
+        }
+
+        if ((await compressedFile.length()) <= 200 * 1024 || quality <= 30) {
+          return compressedFile;
+        }
+      }
+    } catch (e) {
+      debugPrint('Image compression failed: $e');
+    }
+    return null;
   }
 
   /// Update entire request

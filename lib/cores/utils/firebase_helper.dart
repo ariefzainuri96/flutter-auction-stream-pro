@@ -35,6 +35,16 @@ Future<(String, String)> generateToken({
       Uri.parse(generateAgoraTokenUrl),
     );
 
+    if (kDebugMode) {
+      callable = FirebaseFunctions.instance.httpsCallable(
+        'generateAgoraToken',
+      );
+    } else {
+      callable = FirebaseFunctions.instance.httpsCallableFromUri(
+        Uri.parse(generateAgoraTokenUrl),
+      );
+    }
+
     final result = await callable.call({
       'channelName': channelName,
       'uid': uid,

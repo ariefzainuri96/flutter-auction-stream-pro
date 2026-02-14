@@ -69,6 +69,8 @@ class AuctionFirebaseService {
     required double startingBid,
     required String itemName,
     required int hostId,
+    required String auctionImageUrl,
+    required String username,
   }) async {
     debugPrint('[AuctionFirebaseService] Creating auction for room: $roomId');
 
@@ -77,7 +79,9 @@ class AuctionFirebaseService {
       'itemName': itemName,
       'hostId': hostId,
       'startedAt': ServerValue.timestamp,
+      'username': username,
       'isLive': true,
+      'auctionImageUrl': auctionImageUrl,
       'currentBid': {
         'amount': startingBid,
         'bidderId': null,
@@ -222,6 +226,7 @@ class AuctionFirebaseService {
     int limit = 10,
     DateTime? startAfter,
   }) async {
+    debugPrint('TAG_ARIEF => fetchAuctions');
     Query query = _auctionsRootRef.orderByChild('startedAt');
 
     if (startAfter != null) {
@@ -243,7 +248,7 @@ class AuctionFirebaseService {
       return [];
     }
 
-    Query searchQuery = _auctionsRootRef.orderByChild('itemName');
+    Query searchQuery = _auctionsRootRef.orderByChild('startedAt');
     searchQuery =
         searchQuery.startAt(trimmedQuery).endAt('$trimmedQuery\uf8ff');
 
@@ -271,8 +276,8 @@ class AuctionFirebaseService {
 
     final id = data['roomId'] as String?;
     final itemName = data['itemName'] as String?;
-    final imageUrl = data['imageUrl'] as String?;
-    final hostUsername = data['hostUsername'] as String?;
+    final imageUrl = data['auctionImageUrl'] as String?;
+    final hostUsername = data['username'] as String?;
     final hostAvatar = data['hostAvatarUrl'] as String?;
     final viewerCount = _parseViewerCount(data['viewerCount']);
     final isLive = data['isLive'] as bool? ?? true;

@@ -79,21 +79,6 @@ class CreateAuctionView extends StatelessWidget {
                             notifier.updateData(updated);
                           },
                         ),
-                        // _buildStartingBidField(notifier, data),
-
-                        const SizedBox(height: 16),
-
-                        SharedInputField(
-                          label: 'Auction Title',
-                          placeholder: 'Enter a catchy title',
-                          controller: notifier.auctionTitleController,
-                          onChanged: (value) {
-                            final updated = data.request.copyWith(
-                              auctionTitle: value,
-                            );
-                            notifier.updateData(updated);
-                          },
-                        ),
 
                         const SizedBox(height: 16),
 
